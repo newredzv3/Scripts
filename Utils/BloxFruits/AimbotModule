@@ -1,0 +1,1107 @@
+local v2 = {}
+
+loadstring(game:HttpGet('https://raw.githubusercontent.com/PlockScripts/Aimbot-skill-config/refs/heads/main/Config.lua'))()
+
+local vu2 = game:GetService('Players')
+local vu3 = vu2.LocalPlayer
+
+if not vu3.Character then
+    vu3.CharacterAdded:Wait()
+end
+
+game:GetService('UserInputService')
+
+local vu4 = game:GetService('RunService')
+local vu5 = workspace.CurrentCamera
+local v6 = game:GetService('ReplicatedStorage')
+local vu7 = v6:WaitForChild('Remotes'):WaitForChild('CommE')
+local vu8 = v6:FindFirstChild('Mouse')
+local vu13 = setmetatable({}, {
+    __index = function(p9, p10)
+        local v11, v12 = pcall(game.GetService, game, p10)
+
+        if v11 then
+            p9[p10] = v12
+
+            return v12
+        end
+    end,
+})
+local vu14 = false
+local vu15 = false
+local vu16 = false
+local vu17 = false
+local vu18 = false
+local vu19 = false
+local vu20 = false
+local vu21 = false
+local vu22 = false
+local vu23 = nil
+local vu24 = nil
+local vu25 = nil
+local vu26 = nil
+local vu27 = nil
+local vu28 = nil
+local vu29 = nil
+local vu30 = nil
+local vu31 = nil
+local vu32 = nil
+local vu33 = false
+local vu34 = false
+local vu35 = nil
+local vu36 = nil
+local vu37 = {}
+local vu38 = {
+    'X',
+}
+local vu39 = {
+    'TAP',
+}
+local vu40 = 0.1
+local vu41 = 1000
+
+local vu42 = false
+local vu43 = false 
+local vu44 = false 
+
+local function GetRandomHitboxLimb(character)
+    local hitboxLimbs = {"RightLowerArm", "RightUpperArm", "LeftLowerArm", "LeftUpperArm", "RightHand", "LeftHand", "Head", "Torso"}
+    for i = 1, #hitboxLimbs do
+        local limb = character:FindFirstChild(hitboxLimbs[math.random(#hitboxLimbs)])
+        if limb and limb:IsA("BasePart") then
+            return limb
+        end
+    end
+    return character:FindFirstChild("HumanoidRootPart")
+end
+
+local function IsAlive(character)
+    if not character then return false end
+    
+    local humanoid = character:FindFirstChildOfClass("Humanoid") or character:FindFirstChild("Health")
+    if humanoid then
+        local health = humanoid.Health or (humanoid:IsA("IntValue") and humanoid.Value) or 0
+        return health > 0
+    end
+    return true
+end
+
+local function GetValidTargets()
+    local targets = {}
+    local myPos = vu3.Character and vu3.Character:FindFirstChild("HumanoidRootPart")
+    if not myPos then return targets end
+    
+    myPos = myPos.Position
+    
+    for _, player in ipairs(vu2:GetPlayers()) do
+        if player ~= vu3 and player.Character and IsAlive(player.Character) then
+            local rootPart = player.Character:FindFirstChild("HumanoidRootPart")
+            if rootPart then
+                local dist = (rootPart.Position - myPos).Magnitude
+                if dist <= vu41 then
+                    table.insert(targets, {
+                        Character = player.Character,
+                        RootPart = rootPart,
+                        Distance = dist,
+                        Type = "Player"
+                    })
+                end
+            end
+        end
+    end
+    
+    if not vu44 then
+        local enemies = workspace:FindFirstChild('Enemies')
+        if enemies then
+            for _, enemy in ipairs(enemies:GetChildren()) do
+                if enemy:IsA('Model') and IsAlive(enemy) then
+                    local rootPart = enemy:FindFirstChild("HumanoidRootPart")
+                    if rootPart then
+                        local dist = (rootPart.Position - myPos).Magnitude
+                        if dist <= vu41 then
+                            table.insert(targets, {
+                                Character = enemy,
+                                RootPart = rootPart,
+                                Distance = dist,
+                                Type = "Mob"
+                            })
+                        end
+                    end
+                end
+            end
+        end
+    end
+    
+    return targets
+end
+
+local function GetClosestTarget()
+    local targets = GetValidTargets()
+    if #targets == 0 then return nil end
+    
+    table.sort(targets, function(a, b)
+        return a.Distance < b.Distance
+    end)
+    
+    return targets[1]
+end
+
+local function GetPredictedPosition(targetPart, character)
+    if not targetPart or not character then return targetPart and targetPart.Position end
+    
+    local velocity = targetPart.Velocity or Vector3.new(0, 0, 0)
+    local prediction = vu40
+    
+    if vu18 then
+        return targetPart.Position + (velocity * prediction)
+    end
+    
+    return targetPart.Position
+end
+
+local function ShootGun()
+    if not vu42 then return end
+    
+    local closestTarget = GetClosestTarget()
+    if not closestTarget then return end
+    
+    local hitbox = GetRandomHitboxLimb(closestTarget.Character)
+    if not hitbox then return end
+    
+    local pos = GetPredictedPosition(hitbox, closestTarget.Character)
+    
+    local camera = workspace.CurrentCamera
+    local screenPos = camera:WorldToViewportPoint(pos)
+    
+    local VirtualInputManager = game:GetService("VirtualInputManager")
+    VirtualInputManager:SendMouseButtonEvent(screenPos.X, screenPos.Y, 0, true, game, 1)
+    task.wait(0.05)
+    VirtualInputManager:SendMouseButtonEvent(screenPos.X, screenPos.Y, 0, false, game, 1)
+end
+
+local function TapAttack()
+    if not vu43 then return end
+    if not vu3.Character or not vu3.Character:FindFirstChildOfClass("Tool") then return end
+    
+    local closestTarget = GetClosestTarget()
+    if not closestTarget then return end
+    
+    local hitbox = GetRandomHitboxLimb(closestTarget.Character)
+    if not hitbox then return end
+    
+    local pos = GetPredictedPosition(hitbox, closestTarget.Character)
+    
+    local camera = workspace.CurrentCamera
+    local screenPos = camera:WorldToViewportPoint(pos)
+    
+    local VirtualInputManager = game:GetService("VirtualInputManager")
+    VirtualInputManager:SendMouseButtonEvent(screenPos.X, screenPos.Y, 0, true, game, 1)
+    task.wait(0.05)
+    VirtualInputManager:SendMouseButtonEvent(screenPos.X, screenPos.Y, 0, false, game, 1)
+end
+
+spawn(function()
+    local v137, v138 = pcall(getrawmetatable, game)
+
+    if v137 and v138 then
+        setreadonly(v138, false)
+
+        local vu139 = nil
+
+        vu139 = hookmetamethod(game, '__namecall', function(p140, p141, p142, ...)
+            local v143 = getnamecallmethod and (getnamecallmethod():lower() or '') or ''
+
+            if tostring(p140) ~= 'RemoteEvent' or v143 ~= 'fireserver' then
+                if v143 == 'invokeserver' and (vu136() and (type(p141) == 'string' and table.find(vu38, p141))) then
+                    if vu14 and vu26 then
+                        return vu139(p140, p141, vu26, nil, ...)
+                    end
+                    if vu15 and vu28 then
+                        return vu139(p140, p141, vu28, nil, ...)
+                    end
+                end
+            else
+                if typeof(p141) == 'Vector3' then
+                    if vu42 then
+                        local closestTarget = GetClosestTarget()
+                        if closestTarget and closestTarget.RootPart then
+                            local hitbox = GetRandomHitboxLimb(closestTarget.Character)
+                            if hitbox then
+                                local pos = GetPredictedPosition(hitbox, closestTarget.Character)
+                                return vu139(p140, pos, p142, ...)
+                            end
+                        end
+                    end
+                    
+                    if vu14 and vu26 then
+                        return vu139(p140, vu26, p142, ...)
+                    end
+                    if vu15 and vu28 then
+                        return vu139(p140, vu28, p142, ...)
+                    end
+                end
+               
+                if type(p141) == 'string' and (table.find(vu39, p141) and vu21) then
+                    if vu43 then
+                        local closestTarget = GetClosestTarget()
+                        if closestTarget and closestTarget.RootPart then
+                            local hitbox = GetRandomHitboxLimb(closestTarget.Character)
+                            if hitbox then
+                                local pos = GetPredictedPosition(hitbox, closestTarget.Character)
+                                return vu139(p140, p141, pos, nil, ...)
+                            end
+                        end
+                    end
+                    
+                    if vu14 and vu26 then
+                        return vu139(p140, p141, vu26, nil, ...)
+                    end
+                    if vu15 and vu28 then
+                        return vu139(p140, p141, vu28, nil, ...)
+                    end
+                end
+            end
+
+            return vu139(p140, p141, p142, ...)
+        end)
+
+        setreadonly(v138, true)
+    end
+end)
+
+local function vu43(p42)
+    if p42 and p42:FindFirstChild('HumanoidRootPart') then
+        return p42.HumanoidRootPart
+    else
+        return nil
+    end
+end
+
+local function vu48()
+    local v44, v45, v46 = ipairs(vu37)
+
+    while true do
+        local vu47
+
+        v46, vu47 = v44(v45, v46)
+
+        if v46 == nil then
+            break
+        end
+
+        pcall(function()
+            vu47:Disconnect()
+        end)
+    end
+
+    vu37 = {}
+end
+
+local function vu51(p49)
+    if p49 then
+        local v50 = p49.Parent:FindFirstChildOfClass('Humanoid')
+
+        if v50 then
+            if vu18 and v50.WalkSpeed >= 5 then
+                return p49.Position + p49.Velocity * vu40
+            else
+                return p49.Position
+            end
+        else
+            return p49.Position
+        end
+    else
+        return nil
+    end
+end
+
+local function vu72(pu52, p53, pu54, pu55)
+    local v56 = vu3:WaitForChild('PlayerGui')
+
+    if v56:FindFirstChild(pu52 .. 'MiniToggleGuiS') then
+        v56[pu52 .. 'MiniToggleGuiS']:Destroy()
+    end
+
+    local v57 = Instance.new('ScreenGui')
+
+    v57.Name = pu52 .. 'MiniToggleGuiS'
+    v57.ResetOnSpawn = false
+    v57.Parent = vu3:WaitForChild('PlayerGui')
+
+    local vu58 = Instance.new('TextButton')
+
+    vu58.Size = UDim2.new(0, 110, 0, 45)
+    vu58.Position = p53
+    vu58.Text = pu52 .. (pu54.value and ' ON' or ' OFF')
+    vu58.TextScaled = true
+    vu58.Font = Enum.Font.GothamBold
+    vu58.TextColor3 = Color3.fromRGB(255, 255, 255)
+    vu58.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    vu58.BorderSizePixel = 0
+    vu58.AutoButtonColor = false
+    vu58.Parent = v57
+
+    local v59 = Instance.new('UICorner')
+
+    v59.CornerRadius = UDim.new(0, 10)
+    v59.Parent = vu58
+
+    local vu60 = Instance.new('UIStroke')
+
+    vu60.Thickness = 2
+    vu60.Transparency = 0.15
+    vu60.Color = Color3.fromRGB(0, 255, 150)
+    vu60.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    vu60.Parent = vu58
+
+    local vu61 = Instance.new('UIGradient')
+
+    vu61.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 150)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 180, 255)),
+    })
+    vu61.Rotation = 45
+    vu61.Parent = vu58
+
+    local function vu63(p62)
+        vu58.Text = pu52 .. (p62 and ' ON' or ' OFF')
+
+        if p62 then
+            vu61.Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 150)),
+                ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 200, 255)),
+            })
+            vu60.Color = Color3.fromRGB(0, 255, 150)
+        else
+            vu61.Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 80, 80)),
+                ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 140, 80)),
+            })
+            vu60.Color = Color3.fromRGB(255, 100, 100)
+        end
+    end
+
+    vu58.MouseButton1Click:Connect(function()
+        pu54.value = not pu54.value
+
+        pu55(pu54.value)
+        vu63(pu54.value)
+    end)
+    vu58.MouseEnter:Connect(function()
+        vu58:TweenSize(UDim2.new(0, 120, 0, 50), 'Out', 'Quad', 0.15, true)
+    end)
+    vu58.MouseLeave:Connect(function()
+        vu58:TweenSize(UDim2.new(0, 110, 0, 45), 'Out', 'Quad', 0.15, true)
+    end)
+    vu63(pu54.value)
+
+    local vu64 = false
+    local vu65 = nil
+    local vu66 = nil
+
+    local function v68(pu67)
+        if pu67.UserInputType == Enum.UserInputType.Touch or pu67.UserInputType == Enum.UserInputType.MouseButton1 then
+            vu64 = true
+            vu65 = pu67.Position
+            vu66 = vu58.Position
+
+            pu67.Changed:Connect(function()
+                if pu67.UserInputState == Enum.UserInputState.End then
+                    vu64 = false
+                end
+            end)
+        end
+    end
+    local function v71(p69)
+        if vu64 and (p69.UserInputType == Enum.UserInputType.Touch or p69.UserInputType == Enum.UserInputType.MouseMovement) then
+            local v70 = p69.Position - vu65
+
+            vu58.Position = UDim2.new(0, math.clamp(vu66.X.Offset + v70.X, 0, vu5.ViewportSize.X - vu58.AbsoluteSize.X), 0, math.clamp(vu66.Y.Offset + v70.Y, 0, vu5.ViewportSize.Y - vu58.AbsoluteSize.Y))
+        end
+    end
+
+    vu58.InputBegan:Connect(v68)
+    vu58.InputChanged:Connect(v71)
+    vu63(pu54.value)
+
+    return v57
+end
+
+local function vu80(p73)
+    local v74 = vu3:FindFirstChild('PlayerGui')
+
+    if not v74 then
+        return false
+    end
+
+    local v75 = v74:FindFirstChild('Main') and v74.Main:FindFirstChild('Allies') and (v74.Main.Allies:FindFirstChild('Container') and v74.Main.Allies.Container:FindFirstChild('Allies'))
+
+    if v75 then
+        v75 = v74.Main.Allies.Container.Allies:FindFirstChild('ScrollingFrame')
+    end
+    if v75 then
+        local v76, v77, v78 = pairs(v75:GetDescendants())
+
+        while true do
+            local v79
+
+            v78, v79 = v76(v77, v78)
+
+            if v78 == nil then
+                break
+            end
+            if v79:IsA('ImageButton') and v79.Name == p73.Name then
+                return true
+            end
+        end
+    end
+
+    return false
+end
+
+local function vu84(p81)
+    if not p81 or p81 == vu3 then
+        return false
+    end
+
+    local v82 = vu3.Team
+    local v83 = p81.Team
+
+    if v82 and v83 then
+        if v82.Name == 'Pirates' and v83.Name == 'Marines' then
+            return true
+        end
+        if v82.Name == 'Marines' and v83.Name == 'Pirates' then
+            return true
+        end
+        if v82.Name == 'Pirates' and v83.Name == 'Pirates' then
+            return not vu80(p81)
+        end
+        if v82.Name == 'Marines' and v83.Name == 'Marines' then
+            return false
+        end
+    end
+
+    return true
+end
+
+local function vu96(p85)
+    if not p85 then
+        return nil
+    end
+
+    local v86 = math.huge
+    local v87 = vu2
+    local v88, v89, v90 = ipairs(v87:GetPlayers())
+    local v91 = nil
+
+    while true do
+        local v92
+
+        v90, v92 = v88(v89, v90)
+
+        if v90 == nil then
+            break
+        end
+        if v92 ~= vu3 and (vu84(v92) and (v92.Character and v92.Character.Parent ~= nil)) then
+            local v93 = v92.Character:FindFirstChildWhichIsA('Humanoid')
+            local v94 = vu43(v92.Character)
+
+            if v93 and (v93.Health > 0 and v94) then
+                local v95 = (v94.Position - p85.Position).Magnitude
+
+                if v95 <= vu41 then
+                    if v95 < v86 then
+                        v91 = v92
+                        v86 = v95
+                    end
+                end
+            end
+        end
+    end
+
+    return v91
+end
+
+local function vu108(p97)
+    if not p97 then
+        return nil
+    end
+
+    local v98 = workspace:FindFirstChild('Enemies')
+
+    if not v98 then
+        return nil
+    end
+
+    local v99 = math.huge
+    local v100, v101, v102 = ipairs(v98:GetChildren())
+    local v103 = nil
+
+    while true do
+        local v104
+
+        v102, v104 = v100(v101, v102)
+
+        if v102 == nil then
+            break
+        end
+        if v104:IsA('Model') then
+            local v105 = v104:FindFirstChildWhichIsA('Humanoid')
+            local v106 = vu43(v104)
+
+            if v105 and (v105.Health > 0 and v106) then
+                local v107 = (v106.Position - p97.Position).Magnitude
+
+                if v107 <= vu41 then
+                    if v107 < v99 then
+                        v103 = v104
+                        v99 = v107
+                    end
+                end
+            end
+        end
+    end
+
+    return v103
+end
+
+local function vu118(p109)
+    if not p109 then
+        return false
+    end
+
+    local v110 = vu3:FindFirstChild('PlayerGui')
+
+    if not v110 then
+        return false
+    end
+
+    local v111 = v110:FindFirstChild('Main')
+
+    if v111 then
+        v111 = v110.Main:FindFirstChild('Skills')
+    end
+    if not v111 then
+        return false
+    end
+
+    local v112 = v111:FindFirstChild(p109)
+
+    if not v112 then
+        return false
+    end
+
+    local v113, v114, v115 = ipairs({
+        'Z',
+        'X',
+        'C',
+        'V',
+    })
+
+    while true do
+        local v116
+
+        v115, v116 = v113(v114, v115)
+
+        if v115 == nil then
+            break
+        end
+
+        local v117 = v112:FindFirstChild(v116)
+
+        if v117 and v117:FindFirstChild('Cooldown') and (v117.Cooldown:IsA('Frame') and v117.Cooldown.Size.X.Scale == 1) then
+            return true
+        end
+    end
+
+    return false
+end
+
+local function vu120()
+    local v119 = vu24
+
+    if v119 then
+        v119 = vu24.Name == 'Dough-Dough'
+    end
+
+    return v119
+end
+
+local function v122()
+    local v121 = ((not vu24 or vu24.Name ~= 'Lightning-Lightning') and true or false) and vu24
+
+    if v121 then
+        v121 = vu24.Name == 'Portal-Portal'
+    end
+
+    return v121
+end
+
+local function vu130()
+    if not vu23 then
+        vu23 = vu4.RenderStepped:Connect(function()
+            local v123 = vu3.Character
+
+            if v123 then
+                local v124 = v123:FindFirstChild('HumanoidRootPart')
+
+                if v124 then
+                    if vu14 or vu15 then
+                        local v125 = nil
+                        local v126 = nil
+
+                        if vu14 then
+                            local v127 = vu30 or vu96(v124)
+
+                            if v127 and (v127 ~= vu3 and v127.Character) then
+                                vu25 = v127.Name
+                                vu26 = vu51((vu43(v127.Character)))
+                                v126 = vu26
+                                v125 = v127.Character
+                            else
+                                vu26 = nil
+                                vu25 = nil
+                            end
+                        elseif vu29 == 'player' then
+                            vu26 = nil
+                            vu25 = nil
+
+                            clearHighlight()
+                        end
+                        if vu15 then
+                            local v128 = vu108(v124)
+
+                            if v128 then
+                                vu27 = v128.Name
+                                vu28 = vu51((vu43(v128)))
+                                v126 = vu28
+                            else
+                                vu28 = nil
+                                vu27 = nil
+                            end
+                        elseif vu29 == 'NPC' then
+                            vu28 = nil
+                            vu27 = nil
+                        end
+                        if vu24 and (v126 and (vu118(vu24.Name) and not vu120())) then
+                            local v129 = (Vector3.new(v126.X, v124.Position.Y, v126.Z) - v124.Position).Unit
+
+                            v124.CFrame = CFrame.new(v124.Position, v124.Position + v129)
+                        end
+                    end
+                else
+                    return
+                end
+            else
+                return
+            end
+        end)
+    end
+end
+
+local function vu131()
+    if vu23 then
+        vu23:Disconnect()
+
+        vu23 = nil
+    end
+end
+
+local function vu134(p132)
+    vu24 = p132
+
+    table.insert(vu37, p132.AncestryChanged:Connect(function(_, p133)
+        if not p133 then
+            vu24 = nil
+        end
+    end))
+end
+
+local function vu136()
+    local v135 = vu24
+
+    if v135 then
+        v135 = vu24.Name == 'Buddy Sword'
+    end
+
+    return v135
+end
+
+spawn(function()
+    local v137, v138 = pcall(getrawmetatable, game)
+
+    if v137 and v138 then
+        setreadonly(v138, false)
+
+        local vu139 = nil
+
+        vu139 = hookmetamethod(game, '__namecall', function(p140, p141, p142, ...)
+            local v143 = getnamecallmethod and (getnamecallmethod():lower() or '') or ''
+
+            if tostring(p140) ~= 'RemoteEvent' or v143 ~= 'fireserver' then
+                if v143 == 'invokeserver' and (vu136() and (type(p141) == 'string' and table.find(vu38, p141))) then
+                    if vu14 and vu26 then
+                        return vu139(p140, p141, vu26, nil, ...)
+                    end
+                    if vu15 and vu28 then
+                        return vu139(p140, p141, vu28, nil, ...)
+                    end
+                end
+            else
+                if typeof(p141) == 'Vector3' then
+                    if vu14 and vu26 then
+                        return vu139(p140, vu26, p142, ...)
+                    end
+                    if vu15 and vu28 then
+                        return vu139(p140, vu28, p142, ...)
+                    end
+                end
+                if type(p141) == 'string' and (table.find(vu39, p141) and vu21) then
+                    if vu14 and vu26 then
+                        return vu139(p140, p141, vu26, nil, ...)
+                    end
+                    if vu15 and vu28 then
+                        return vu139(p140, p141, vu28, nil, ...)
+                    end
+                end
+            end
+
+            return vu139(p140, p141, p142, ...)
+        end)
+
+        setreadonly(v138, true)
+    end
+end)
+
+if not v122() and (vu8 and typeof(vu8) == 'Instance') then
+    local v144, v145 = pcall(function()
+        return require(vu8)
+    end)
+
+    if v144 and v145 then
+        if type(v145) ~= 'table' then
+            Mouse = nil
+        else
+            Mouse = v145
+        end
+    else
+        Mouse = nil
+    end
+    if Mouse then
+        local vu146 = vu3.Character or vu3.CharacterAdded:Wait()
+
+        if vu146 then
+            vu146 = vu146:FindFirstChild('HumanoidRootPart')
+        end
+        if vu146 then
+            pcall(function()
+                if type(Mouse) == 'table' then
+                    Mouse.Hit = CFrame.new(vu146.Position)
+                    Mouse.Target = vu146
+                end
+            end)
+        else
+            task.spawn(function()
+                local vu147 = (vu3.Character or vu3.CharacterAdded:Wait()):WaitForChild('HumanoidRootPart')
+
+                pcall(function()
+                    if type(Mouse) == 'table' then
+                        Mouse.Hit = CFrame.new(vu147.Position)
+                        Mouse.Target = vu147
+                    end
+                end)
+            end)
+        end
+    end
+
+    vu4.Heartbeat:Connect(function()
+        if vu21 and (vu14 or vu15) then
+            if Mouse and (vu21 and (vu14 or vu15)) then
+                local vu148 = nil
+
+                if vu26 then
+                    vu148 = CFrame.new(vu26)
+                elseif vu28 then
+                    vu148 = CFrame.new(vu28)
+                end
+                if vu148 then
+                    pcall(function()
+                        if type(Mouse) == 'table' then
+                            Mouse.Hit = vu148
+                            Mouse.Target = nil
+                        end
+                    end)
+
+                    if vu8 then
+                        local v149, v150 = pcall(require, vu8)
+
+                        if v149 and type(v150) == 'table' then
+                            v150.Hit = vu148
+                            v150.Target = nil
+                        end
+                    end
+                end
+            end
+        end
+    end)
+end
+
+local function vu153(p151)
+    local v152 = vu3.Character
+
+    if v152 then
+        return vu13.CollectionService:HasTag(v152, p151)
+    else
+        return false
+    end
+end
+
+local function vu157()
+    if not vu22 then
+        vu22 = true
+
+        task.spawn(function()
+            while vu20 do
+                task.wait(0.1)
+
+                if vu153('Ken') then
+                    local v154 = vu3:FindFirstChild('PlayerGui')
+
+                    if v154 then
+                        local v155 = v154:FindFirstChild('MobileContextButtons')
+
+                        if v155 then
+                            v155 = v154.MobileContextButtons.ContextButtonFrame:FindFirstChild('BoundActionKen')
+                        end
+                        if v155 and v155:GetAttribute('Selected') ~= true then
+                            v155:SetAttribute('Selected', true)
+                        end
+                    end
+
+                    local v156 = getrenv()._G.OM
+
+                    if v156 and not v156.active then
+                        v156.radius = 0
+
+                        v156:setActive(true)
+                        vu7:FireServer('Ken', true)
+                    end
+                end
+            end
+
+            vu22 = false
+        end)
+    end
+end
+
+local function v165(p158)
+    vu48()
+
+    local v159, v160, v161 = ipairs(p158:GetChildren())
+
+    while true do
+        local v162
+
+        v161, v162 = v159(v160, v161)
+
+        if v161 == nil then
+            break
+        end
+        if v162:IsA('Tool') then
+            vu134(v162)
+        end
+    end
+
+    table.insert(vu37, p158.ChildAdded:Connect(function(p163)
+        if p163:IsA('Tool') then
+            vu134(p163)
+        end
+    end))
+    table.insert(vu37, p158.ChildRemoved:Connect(function(p164)
+        if p164 == vu24 then
+            vu24 = nil
+        end
+    end))
+end
+
+vu3.CharacterAdded:Connect(v165)
+
+if vu3.Character then
+    v165(vu3.Character)
+end
+
+function v1.SetGunAim(_, p166)
+    vu42 = p166
+end
+
+function v1.SetTapAim(_, p167)
+    vu43 = p167
+end
+
+function v1.SetIgnoreMobs(_, p168)
+    vu44 = p168
+end
+
+function v1.IsGunAimEnabled(_)
+    return vu42
+end
+
+function v1.IsTapAimEnabled(_)
+    return vu43
+end
+
+function v1.IsIgnoreMobsEnabled(_)
+    return vu44
+end
+
+function v1.ShootGun(_)
+    ShootGun()
+end
+
+function v1.TapAttack(_)
+    TapAttack()
+end
+
+function v1.SetAutoKen(_, p166)
+    vu20 = p166
+
+    if p166 then
+        vu157()
+    end
+end
+
+function v1.SetZSkillorM1(_, p167)
+    vu21 = p167
+end
+
+function v1.Pause(_)
+    vu14 = false
+    vu15 = false
+end
+
+function v1.Restore(_)
+    vu14 = vu16
+    vu15 = vu17
+end
+
+function v1.IsplayerAimEnabled(_)
+    return vu14
+end
+
+function v1.IsNPCAimEnabled(_)
+    return vu15
+end
+
+function v1.SetDistanceLimit(_, p168)
+    if typeof(p168) == 'number' then
+        vu41 = p168
+    end
+end
+
+function v1.SetSelectedPlayer(_, p169)
+    if p169 and p169 ~= '' then
+        local v170 = vu2:FindFirstChild(p169)
+
+        if v170 then
+            vu30 = v170
+        end
+    else
+        vu30 = nil
+    end
+end
+
+function v1.GetSelectedPlayer(_)
+    return vu30 and vu30.Name or 'None'
+end
+
+function v1.SetPrediction(_, p171)
+    vu18 = p171
+end
+
+function v1.SetHighlight(_, p172)
+    vu19 = p172
+
+    if not p172 then
+        clearHighlight()
+    end
+end
+
+function v1.IsHighlightEnabled(_)
+    return vu19
+end
+
+function v1.SetPredictionAmount(_, p173)
+    if typeof(p173) == 'number' then
+        vu40 = p173
+    end
+end
+
+function v1.SetPlayerSilentAim(_, p174)
+    vu16 = p174
+    vu14 = p174
+
+    if p174 then
+        vu130()
+    elseif not vu15 then
+        vu131()
+    end
+end
+
+function v1.SetNPCSilentAim(_, p175)
+    vu17 = p175
+    vu15 = p175
+
+    if p175 then
+        vu130()
+    elseif not vu14 then
+        vu131()
+    end
+end
+
+local function vu176()
+    vu14 = vu31 and vu31.value or false
+    vu15 = vu32 and vu32.value or false
+    vu16 = vu14
+    vu17 = vu15
+
+    if vu14 or vu15 then
+        vu130()
+    else
+        vu131()
+    end
+end
+
+function v1.SetMiniTogglePlayerSilentAim(_, p177)
+    if vu33 or not p177 then
+        if vu33 and vu35 then
+            vu35.Enabled = p177
+        end
+    else
+        vu31 = {value = vu14}
+        vu35 = vu72('Player', UDim2.new(0, 10, 0, 90), vu31, function(p178)
+            vu31.value = p178
+
+            vu176()
+        end)
+        vu33 = true
+    end
+end
+
+function v1.SetMiniToggleNpcSilentAim(_, p179)
+    if vu34 or not p179 then
+        if vu34 and vu36 then
+            vu36.Enabled = p179
+        end
+    else
+        vu32 = {value = vu15}
+        vu36 = vu72('NPC', UDim2.new(0, 10, 0, 50), vu32, function(p180)
+            vu32.value = p180
+
+            vu176()
+        end)
+        vu34 = true
+    end
+end
+
+return v2
