@@ -1,41 +1,14 @@
-local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local VirtualInputManager = game:GetService("VirtualInputManager")
+local RunService: RunService = game:GetService("RunService")
+local Players: Players = game:GetService("Players")
+local VirtualInputManager: VirtualInputManager = game:GetService("VirtualInputManager")
+local CollectionService: CollectionService = game:GetService("CollectionService")
+local UserInputService: UserInputService = game:GetService("UserInputService")
 
 local Player = Players.LocalPlayer
-
-Enemies = workspace:WaitForChild("Enemies")
-Characters = workspace:WaitForChild("Characters")
-SeaBeasts = workspace:WaitForChild("SeaBeasts")
-
-Net = ReplicatedStorage:WaitForChild("Remotes")
-Modules = ReplicatedStorage:WaitForChild("Modules")
-GunValidator = Net:WaitForChild("RE/GunValidator")
-
-Stepped = RunService.Stepped
-Connections = Connections or {}
-
-Settings = Settings or {}
-getgenv().Settings = Settings
-
-Module = Module or {}
-
-Module.IsAlive = function(char)
-    return char and char:FindFirstChild("Humanoid") and char.Humanoid.Health > 0
-end
-
-Module.AttackCooldown = 0
-
-function CheckPlayerAlly()
-    return false
-end
-
-function DistanceFromCharacter(part)
-    local char = Player.Character
-    if not char or not char:FindFirstChild("HumanoidRootPart") then return math.huge end
-    return (char.HumanoidRootPart.Position - part.Position).Magnitude
-end
+local Enemies: Folder = workspace:WaitForChild("Enemies")
+local Characters: Folder = workspace:WaitForChild("Characters")
+local SeaBeasts: Folder = workspace:WaitForChild("SeaBeasts")
+local Boats: Folder = workspace:WaitForChild("Boats")
 
 Module.FastAttack = (function()
 	local FastAttack = {
