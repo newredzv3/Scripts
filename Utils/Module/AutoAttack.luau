@@ -77,7 +77,9 @@ task.defer(function()
     end
 end)
 
-local IsAlive = Module.IsAlive
+local function IsAlive(Character)
+    return Character and Character:FindFirstChild("Humanoid") and Character.Humanoid.Health > 0
+end
 
 AutoAttack.ShootsFunctions = {
     ["Skull Guitar"] = function(self, Equipped, Position)
