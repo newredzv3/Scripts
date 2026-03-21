@@ -317,6 +317,4 @@ function AutoAttack.attack()
     end
 end
 
-table.insert(Connections,RunService.Stepped:Connect(AutoAttack.attack))
-
 return AutoAttack
