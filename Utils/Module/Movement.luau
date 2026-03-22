@@ -3,46 +3,70 @@ local Movement = {}
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
-Movement.Enabled = false
-Movement.Speed = 16
-Movement.Jump = 50
+local MovementEnabled = false
+local WalkSpeedValue = 58
+local JumpValue = 58
 
-function Movement:Apply()
-    local char = LocalPlayer.Character
-    if not char then return end
-    local hum = char:FindFirstChild("Humanoid")
-    if hum then
-        if self.Enabled then
-            hum.WalkSpeed = self.Speed
-            hum.JumpPower = self.Jump
-        else
-            hum.WalkSpeed = 16
-            hum.JumpPower = 50
-        end
-    end
-end
+local function ApplyMovement(char)
+	local hum = char:WaitForChild("Humanoid",5)
+	if not hum then return end
 
-function Movement:SetSpeed(v)
-    self.Speed = v
-    self:Apply()
-end
+	if MovementEnabled then
+		hum.WalkSpeed = WalkSpeedValue
+		hum.JumpPower = JumpValue
+	else
+		hum.WalkSpeed = 16
+		hum.JumpPower = 50
+	end
 
-function Movement:SetJump(v)
-    self.Jump = v
-    self:Apply()
+	hum:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+		if MovementEnabled then
+			hum.WalkSpeed = WalkSpeedValue
+		end
+	end)
+
+	hum:GetPropertyChangedSignal("JumpPower"):Connect(function()
+		if MovementEnabled then
+			hum.JumpPower = JumpValue
+		end
+	end)
 end
 
 function Movement:Toggle(v)
-    self.Enabled = v
-    self:Apply()
+	MovementEnabled = v
+	local char = LocalPlayer.Character
+	if char then
+		ApplyMovement(char)
+	end
 end
 
-task.spawn(function()
-    while task.wait() do
-        if Movement.Enabled then
-            Movement:Apply()
-        end
-    end
+function Movement:SetSpeed(v)
+	WalkSpeedValue = v
+	if MovementEnabled then
+		local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
+		if hum then
+			hum.WalkSpeed = v
+		end
+	end
+end
+
+function Movement:SetJump(v)
+	JumpValue = v
+	if MovementEnabled then
+		local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
+		if hum then
+			hum.JumpPower = v
+		end
+	end
+end
+
+LocalPlayer.CharacterAdded:Connect(function(char)
+	task.wait(0.2)
+	ApplyMovement(char)
 end)
+
+if LocalPlayer.Character then
+	ApplyMovement(LocalPlayer.Character)
+end
 
 return Movement
