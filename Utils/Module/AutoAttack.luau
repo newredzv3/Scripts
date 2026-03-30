@@ -37,21 +37,41 @@ function AutoAttack:Toggle(v)
     self.Enabled = v
 end
 
-local VirtualInputManager = game:GetService("VirtualInputManager")
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
+local VirtualInputManager: VirtualInputManager = game:GetService("VirtualInputManager")
+local CollectionService: CollectionService = game:GetService("CollectionService")
+local ReplicatedStorage: ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TeleportService: TeleportService = game:GetService("TeleportService")
+local RunService: RunService = game:GetService("RunService")
+local Players: Players = game:GetService("Players")
 
-local Player = Players.LocalPlayer
-local Modules = ReplicatedStorage:WaitForChild("Modules")
-local Net = Modules:WaitForChild("Net")
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
-local GunValidator = Remotes:WaitForChild("Validator2")
-local Events = ReplicatedStorage:WaitForChild("Events")
+local GunValidator: RemoteEvent = Remotes:WaitForChild("Validator2")
+local CommF: RemoteFunction = Remotes:WaitForChild("CommF_")
+local CommE: RemoteEvent = Remotes:WaitForChild("CommE")
 
-local RE_RegisterAttack = Net:WaitForChild("RE/RegisterAttack")
-local RE_ShootGunEvent = Net:WaitForChild("RE/ShootGunEvent")
-local RE_RegisterHit = Net:WaitForChild("RE/RegisterHit")
+local ChestModels: Folder = workspace:WaitForChild("ChestModels")
+local WorldOrigin: Folder = workspace:WaitForChild("_WorldOrigin")
+local Characters: Folder = workspace:WaitForChild("Characters")
+local SeaBeasts: Folder = workspace:WaitForChild("SeaBeasts")
+local Enemies: Folder = workspace:WaitForChild("Enemies")
+local Boats: Folder = workspace:WaitForChild("Boats")
+local Map: Model = workspace:WaitForChild("Map")
+
+local EnemySpawns: Folder = WorldOrigin:WaitForChild("EnemySpawns")
+local Locations: Folder = WorldOrigin:WaitForChild("Locations")
+
+local RenderStepped = RunService.RenderStepped
+local Heartbeat = RunService.Heartbeat
+local Stepped = RunService.Stepped
+local Player = Players.LocalPlayer
+
+local Data: Folder = Player:WaitForChild("Data")
+local Level: IntValue = Data:WaitForChild("Level")
+local Fragments: IntValue = Data:WaitForChild("Fragments")
+local Money: IntValue = Data:WaitForChild("Beli")
+
+local Modules: Folder? = ReplicatedStorage:WaitForChild("Modules")
+local Net: ModuleScript = Modules:WaitForChild("Net")
 
 local SUCCESS_FLAGS, COMBAT_REMOTE_THREAD = pcall(function()
     return require(Modules.Flags).COMBAT_REMOTE_THREAD or false
