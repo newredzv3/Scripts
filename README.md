@@ -6,7 +6,8 @@
 - Blox Fruits
 
 ### global load
-```
+```lua
+
 loadstring(game:HttpGet("https://raw.githubusercontent.com/newredzv3/Scripts/refs/heads/main/main.luau"))(Settings)
 ```
 
