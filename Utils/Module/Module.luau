@@ -572,16 +572,6 @@ local Module = {} do
 		Signals.EnemyAdded = Signal.new()
 		Signals.EnemyDied = Signal.new()
 		Signals.Notify = Signal.new()
-		Signals.Error = Signal.new()
-
-		Signals.Error:Connect(function(ErrorMessage)
-			_ENV.loadedFarm = false
-			_ENV.OnFarm = false
-			
-			local Message = Instance.new("Message", workspace)
-			_ENV.redz_hub_error = Message
-			Message.Text = (`OMG-Hub error [ {Settings.RunningOption or "Null"} ] {ErrorMessage}`)
-		end)
 	end
 	
 	Module.RunFunctions = {} do
@@ -702,29 +692,32 @@ local Module = {} do
 			end
 		end
 		
-		Module.RunFunctions.FarmQueue = function(Options)
-			local Success, ErrorMessage = pcall(function()
-				while task.wait(Settings.SmoothMode and 0.25 or 0) do
-					local Enabled = false
-					
-					for _, Option in Options do
-						Settings.RunningOption = Option.Name
-						local Method = Option.Function()
-						
-						if Method then
-							Settings.RunningMethod = type(Method) == "string" and Method
-							Enabled = true; break
-						else
-							Settings.RunningOption, Settings.RunningMethod = nil, nil
-						end
-					end
-					
-					_ENV.OnFarm = (_ENV.teleporting or Enabled)
-				end
-			end)
-			
-		   Module.Signals.Error:Fire(ErrorMessage)
-		end
+      Module.RunFunctions.FarmQueue = function(Options)
+    local function GetQueue()
+        for _, Option in Options do
+            Settings.RunningOption = Option.Name
+            local Method = Option.Function()
+            if Method then
+                if type(Method) == "string" then
+                    Settings.RunningMethod = Method
+                end
+                return Method
+            end
+        end
+        Settings.RunningOption, Settings.RunningMethod = nil, nil
+    end
+    spawn(function()
+        while task.wait(Settings.SmoothMode and 0.25 or 0) do
+            pcall(function()
+                if _ENV.teleporting then
+                    _ENV.OnFarm = true
+                else
+                    _ENV.OnFarm = GetQueue() and true or false
+                end
+            end)
+        end
+    end)
+end
 	end
 	
 	function Module.FireRemote(...)
@@ -1097,7 +1090,7 @@ local Module = {} do
 			
 			local HumanoidRootPart = Enemy:WaitForChild("HumanoidRootPart")
 			
-			if HumanoidRootPart and (Enemy.Name ~= "rip_indra True Form" and Enemy.Name ~= "Blank Buddy") then
+			if HumanoidRootPart and (Enemy.Name ~= "rip_indra True Form" and Enemy.Name ~= "Blank Buddy") and Enemy:IsA("Model") then
 				if (HumanoidRootPart.Position - SeaCastle.Position).Magnitude <= 750 then
 					task.spawn(New, EnemiesModule.__PirateRaid, Enemy)
 					Module.PirateRaid = tick()
