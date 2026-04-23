@@ -1,13 +1,13 @@
 {
   "Select Tool": ["Selecionar Ferramenta", "Escolha a ferramenta que deseja usar"],
-  "UI Scale": ["Tamanho da Interface", "Ajustar o tamanho da interface"],
+  "UI Scale": ["Tamanho da UI", "Ajuste o tamanho da interface de usuário"],
   
   "Farm": ["Farm", ""],
   "Main-Farm": ["Farm Principal", ""],
   "Auto Farm Level": ["Farm de Nível Automático", "Farma níveis automaticamente"],
   "Auto Farm Nearest": ["Farmar Inimigos Próximos", "Mata inimigos próximos automaticamente"],
   "Auto Pirates Sea": ["Farmar Piratas do Mar", "Conclui automaticamente a invasão pirata no Castelo do Mar"],
-  "Auto Factory": ["Fábrica Automática", "Aparece a cada 1:30 (horas, minutos)"],
+  "Auto Factory": ["Fábrica Automática", "Aparece a cada 1:30 [horas, minutos]"],
   "Kill Player": ["Matar Jogador", ""],
   
   "Quest/Items": ["Missões/Itens", ""],
@@ -369,6 +369,5 @@
   "Shop": ["Loja", ""],
   "Misc": ["Diversos", ""],
   "Stats": ["Status", ""],
-  "Script Loaded": ["Script Carregado", ""],
-  "redz hub loaded successfully! LeftControl to minimize.": ["redz hub carregado com sucesso! LeftControl para minimizar.", ""]
+  "Script Loaded": ["Script Carregado", ""]
 }
