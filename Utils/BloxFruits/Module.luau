@@ -770,24 +770,59 @@ end
 		return Module.Bosses[Name] and true or false
 	end
 
-	function Module.Rejoin(): (nil)
+	function Module.Rejoin()
 		 local ServerBrowser = ReplicatedStorage.__ServerBrowser 
          task.spawn(ServerBrowser.InvokeServer, ServerBrowser, "teleport", game.JobId)
 	end
 
-   function Module:ServerHop(): (nil)   
-    local ServerBrowser = ReplicatedStorage.__ServerBrowser 
-    for i = 1, 100 do
-      local Servers = ServerBrowser:InvokeServer(i)
-      for id,info in pairs(Servers) do
-        if id ~= game.JobId and info["Count"] < 11 then
-          task.spawn(function()
-    pcall(function()
-        ServerBrowser:InvokeServer("teleport", id)
-    end)
-end)
+   function Module:ServerHop(bO)
+       if not bO then
+        bO = 10
+    end
+    ticklon = tick()
+    repeat
+        task.wait()
+    until tick() - ticklon >= 1
+    local function Hop()
+        for r = 1, math.huge do
+            local bP = game:GetService("ReplicatedStorage").__ServerBrowser:InvokeServer(r)
+            for k, v in pairs(bP) do
+                if k ~= game.JobId and v["Count"] < bO then
+                   game:GetService("ReplicatedStorage").__ServerBrowser:InvokeServer("teleport", k)
+                end
+            end
         end
-      end
+        return false
+    end
+    if not getgenv().Loaded then
+        local function bQ(v)
+            if v.Name == "ErrorPrompt" then
+                if v.Visible then
+                    if v.TitleFrame.ErrorTitle.Text == "Teleport Failed" then
+                        HopServer()
+                        v.Visible = false
+                    end
+                end
+                v:GetPropertyChangedSignal("Visible"):Connect(
+                    function()
+                        if v.Visible then
+                            if v.TitleFrame.ErrorTitle.Text == "Teleport Failed" then
+                                HopServer()
+                                v.Visible = false
+                            end
+                        end
+                    end
+                )
+            end
+        end
+        for k, v in pairs(game.CoreGui.RobloxPromptGui.promptOverlay:GetChildren()) do
+            bQ(v)
+        end
+        game.CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(bQ)
+        getgenv().Loaded = true
+    end
+    while not Hop() do
+        wait()
     end
   end
 	
@@ -1051,15 +1086,15 @@ end)
 		end
 	})
 
-	Module.Enemies = (function()
+Module.Enemies = (function()
 		local EnemiesModule = CreateDictionary({
 			"__CakePrince", "__PirateRaid", "__RaidBoss", "__TyrantSkies", "__Bones", "__Elite", "__Others", 
 		}, {})
 		
 		local Signals = Module.Signals
-		local IsAlive = Module.IsAlive
-        local SeaCastle = CFrame.new(-5496.17432, 313.768921, -2841.53027, 0.924894512, 7.37058015e-09, 0.380223751, 3.5881019e-08, 1, -1.06665446e-07, -0.380223751, 1.12297109e-07, 0.924894512)
-
+        local IsAlive = Module.IsAlive
+		local SeaCastle = CFrame.new(-5496.17432, 313.768921, -2841.53027, 0.924894512, 7.37058015e-09, 0.380223751, 3.5881019e-08, 1, -1.06665446e-07, -0.380223751, 1.12297109e-07, 0.924894512)
+		
 		local TagsMobs = {
 			__Elite = CreateDictionary({ "Deandre", "Diablo", "Urban" }, true),
 			__Bones = CreateDictionary({ "Reborn Skeleton", "Living Zombie", "Demonic Soul", "Posessed Mummy" }, true),
@@ -1078,31 +1113,36 @@ end)
 		end
 		
 		local function New(list, NewEnemy)
-			if table.find(list, NewEnemy) then return end
-			
-			local Humanoid = NewEnemy:WaitForChild("Humanoid")
-			
-			if Humanoid and Humanoid.ClassName == "Humanoid" and Humanoid.Health > 0 then
-				table.insert(list, NewEnemy)
-				Humanoid.Died:Wait()
-				table.remove(list, table.find(list, NewEnemy))
+	if not list or not NewEnemy then return end
+	if table.find(list, NewEnemy) then return end
+
+	local Humanoid = NewEnemy:FindFirstChild("Humanoid")
+	if not Humanoid then return end
+
+	if Humanoid.Health > 0 then
+		table.insert(list, NewEnemy)
+
+		Humanoid.Died:Connect(function()
+			local index = table.find(list, NewEnemy)
+			if index then
+				table.remove(list, index)
 			end
-		end
+		end)
+	end
+end
 		
 		local function IsFromPiratesSea(Enemy)
-    local Humanoid = Enemy:WaitForChild("Humanoid", 3)
-    local Root = Enemy:WaitForChild("HumanoidRootPart", 3)
-
-    if not Humanoid or not Root then return end
-    if Humanoid.Health <= 0 then return end
-
-    if Enemy.Name ~= "rip_indra True Form" and Enemy.Name ~= "Blank Buddy" then
-        if (Root.Position - SeaCastle.Position).Magnitude <= 750 then
-            task.spawn(New, EnemiesModule.__PirateRaid, Enemy)
-            Module.PirateRaid = tick()
-        end
-    end
-end
+			if not Enemy:WaitForChild("Humanoid") or Enemy.Humanoid.Health <= 0 then return end
+			
+			local HumanoidRootPart = Enemy:WaitForChild("HumanoidRootPart")
+			
+			if HumanoidRootPart and (Enemy.Name ~= "rip_indra True Form" and Enemy.Name ~= "Blank Buddy") then
+				if (HumanoidRootPart.Position - SeaCastle.Position).Magnitude <= 750 then
+					task.spawn(New, EnemiesModule.__PirateRaid, Enemy)
+					Module.PirateRaid = tick()
+				end
+			end
+		end
 		
 		local function NewEnemyAdded(Enemy)
 			local EnemyName = Enemy.Name
@@ -1112,11 +1152,8 @@ end
 			task.spawn(New, Others[EnemyName], Enemy)
 			
 			if Module.GameData.Sea == 3 then
-    task.spawn(function()
-            IsFromPiratesSea(Enemy)
-            task.wait(0.2)
-    end)
-end
+				task.spawn(IsFromPiratesSea, Enemy)
+			end
 			
 			if Enemy:GetAttribute("RaidBoss") then
 				task.spawn(New, EnemiesModule.__RaidBoss, Enemy)
@@ -1246,8 +1283,8 @@ end
 			
 			return NewTag
 		end
-
-    local function Bring(Enemy)
+		
+		local function Bring(Enemy)
       local PlayerRootPart = (Player.Character or Player.CharacterAdded()):WaitForChild("HumanoidRootPart")
       local RootPart = Enemy:WaitForChild("HumanoidRootPart")
       local Humanoid = Enemy:WaitForChild("Humanoid")
@@ -1292,10 +1329,7 @@ end
 		end
 		
 		for _, Enemy in CollectionService:GetTagged("BasicMob") do NewEnemyAdded(Enemy) end
-		for _, Enemy in Enemies:GetChildren() do NewEnemyAdded(Enemy) end
-		
 		table.insert(Connections, CollectionService:GetInstanceAddedSignal("BasicMob"):Connect(NewEnemyAdded))
-		table.insert(Connections, Enemies.ChildAdded:Connect(NewEnemyAdded))
 		
 		table.insert(Connections, CollectionService:GetInstanceAddedSignal(KILLAURA_TAG):Connect(KillAura))
 		table.insert(Connections, CollectionService:GetInstanceAddedSignal(BRING_TAG):Connect(Bring))
@@ -1360,7 +1394,7 @@ end
 
    Module.FastAttack = (function()
 		local FastAttack = {
-			Distance = 75,
+			Distance = 76,
 			attackMobs = true,
 			attackPlayers = true,
 			Equipped = nil,
@@ -1944,7 +1978,6 @@ end
 		return BodyVelocity
 	end)()
 
-  if identifyexecutor() == "Delta" then
 	Module.Hooking = (function()
 		local Hooking = {
 			Skills = CreateDictionary({ "Z", "X", "C", "V", "F" }, true),
@@ -1974,7 +2007,8 @@ end
 				end
 			end
 		end
-		
+
+		if identifyexecutor() == "Delta" then
 		function Hooking.UpdateClosests()
 			local SmoothDebounce = Settings.SmoothMode and 0.5 or 0.25
 			
@@ -2092,10 +2126,10 @@ end
 		end)
 		
 		table.insert(Connections, Heartbeat:Connect(Hooking.UpdateClosests))
+     end
 		
 		return Hooking
 	end)()
-  end
 
   task.defer(function()
 	 	local DeathEffect = require(WaitChilds(ReplicatedStorage, "Effect", "Container", "Death"))
