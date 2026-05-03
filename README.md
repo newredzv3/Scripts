@@ -21,3 +21,5 @@ local Settings = {
 }
 loadstring(game:HttpGet("https://raw.githubusercontent.com/newredzv3/Scripts/refs/heads/main/main.luau"))(Settings)
 ```
+
+### This Redz Hub is a fan-made version, we welcome criticism :) 
