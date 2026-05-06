@@ -11,7 +11,7 @@ local PlayerMouse = Player:GetMouse()
 local CoreGui = (gethui and gethui()) or game:GetService("CoreGui");
 
 local redzlib = {
-	Themes = {
+	Themes = { 
 		Darker = {
 			["Color Hub 1"] = ColorSequence.new({
 				ColorSequenceKeypoint.new(0.00, Color3.fromRGB(25, 25, 25)),
