@@ -118,4 +118,4 @@ for _, Script in Scripts do
 	if IsPlace(Script) then
 		return fetcher.load("{Repository}Games/" .. Script.UrlPath)(fetcher, ...)
 	end
-end
+end 
