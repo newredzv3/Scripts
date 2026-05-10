@@ -1,4 +1,4 @@
---[[local Scripts = {
+local Scripts = {
 	{
 		PlacesIds = {2753915549, 4442272183, 7449423635},
 		UrlPath = "BloxFruits.luau"
@@ -118,11 +118,26 @@ for _, Script in Scripts do
 	if IsPlace(Script) then
 		return fetcher.load("{Repository}Games/" .. Script.UrlPath)(fetcher, ...)
 	end
-end ]]
+end 
 
 
 
-local _ENV = (getgenv or getrenv or getfenv)()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+--[[local _ENV = (getgenv or getrenv or getfenv)()
 local BETA_VERSION = BETA_VERSION or _ENV.BETA_VERSION
 
 local Scripts = {
@@ -246,4 +261,4 @@ for _, Script in Scripts do
 	if IsPlace(Script) then
 		return fetcher.load("{Repository}Games/" .. Script.UrlPath)(fetcher, ...)
 	end
-end
+end]]
