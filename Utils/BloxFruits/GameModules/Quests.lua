@@ -1,794 +1,862 @@
-functionMaterialMon()
-if_G.SelectMaterial~="RadiactiveMaterial"then
-if_G.SelectMaterial~="Leather+ScrapMetal"then
-if_G.SelectMaterial~="MagmaOre"then
-if_G.SelectMaterial~="FishTail"then
-if_G.SelectMaterial=="AngelWings"then
-MMon="RoyalSoldier"
-MPos=CFrame.new(-7759.45898,5606.93652,-1862.70276,-0.866007447,0,-0.500031412,0,1,0,0.500031412,0,-0.866007447)
-SP="SkyArea2"
-elseif_G.SelectMaterial=="MysticDroplet"then
-MMon="WaterFighter"
-MPos=CFrame.new(-3331.70459,239.138336,-10553.3564,-0.29242146,0,0.95628953,0,1,0,-0.95628953,0,-0.29242146)
-SP="ForgottenIsland"
-elseif_G.SelectMaterial=="VampireFang"then
-MMon="Vampire"
-MPos=CFrame.new(-6132.39453,9.00769424,-1466.16919,-0.927179813,0,-0.374617696,0,1,0,0.374617696,0,-0.927179813)
-SP="Graveyard"
-elseif_G.SelectMaterial=="Gunpowder"then
-MMon="PistolBillionaire"
-MPos=CFrame.new(-185.693283,84.7088699,6103.62744,0.90629667,0,-0.422642082,0,1,0,0.422642082,0,0.90629667)
-SP="Mansion"
-elseif_G.SelectMaterial~="MiniTusk"then
-if_G.SelectMaterial=="ConjuredCocoa"then
-MMon="ChocolateBarBattler"
-MPos=CFrame.new(582.828674,25.5824986,-12550.7041,-0.766061664,0,-0.642767608,0,1,0,0.642767608,0,-0.766061664)
-SP="Chocolate"
-end
-else
-MMon="MythologicalPirate"
-MPos=CFrame.new(-13456.0498,469.433228,-7039.96436,0,0,1,0,1,0,-1,0,0)
-SP="BigMansion"
-end
-elseifgame.PlaceId==2753915549then
-MMon="FishmanWarrior"
-MPos=CFrame.new(60943.9023,17.9492188,1744.11133,0.826706648,0,-0.562633216,0,1,0,0.562633216,0,0.826706648)
-SP="UnderwaterCity"
-MMon="FishmanCommando"
-MPos=CFrame.new(61760.8984,18.0800781,1460.11133,-0.632549644,0,-0.774520278,0,1,0,0.774520278,0,-0.632549644)
-SP="UnderwaterCity"
-elseifgame.PlaceId==7449423635then
-MMon="FishmanCaptain"
-MPos=CFrame.new(-10828.1064,331.825989,-9049.14648,-0.0912091732,0,0.995831788,0,1,0,-0.995831788,0,-0.0912091732)
-SP="PineappleTown"
-end
-elseifgame.PlaceId==2753915549then
-MMon="MilitarySoldier"
-MPos=CFrame.new(-5565.60156,9.10001755,8327.56934,-0.838688731,0,-0.544611216,0,1,0,0.544611216,0,-0.838688731)
-SP="Magma"
-MMon="MilitarySpy"
-MPos=CFrame.new(-5806.70068,78.5000458,8904.46973,0.707134247,0,0.707079291,0,1,0,-0.707079291,0,0.707134247)
-SP="Magma"
-elseifgame.PlaceId==4442272183then
-MMon="LavaPirate"
-MPos=CFrame.new(-5158.77051,14.4791956,-4654.2627,-0.848060489,0,-0.529899538,0,1,0,0.529899538,0,-0.848060489)
-SP="CircleIslandFire"
-end
-elseifgame.PlaceId==2753915549then
-MMon="Pirate"
-MPos=CFrame.new(-967.433105,13.5999937,4034.24707,-0.258864403,0,-0.965913713,0,1,0,0.965913713,0,-0.258864403)
-SP="Pirate"
-MMon="Brute"
-MPos=CFrame.new(-1191.41235,15.5999985,4235.50928,0.629286051,0,-0.777173758,0,1,0,0.777173758,0,0.629286051)
-SP="Pirate"
-elseifgame.PlaceId~=4442272183then
-ifgame.PlaceId==7449423635then
-MMon="PirateMillionaire"
-MPos=CFrame.new(-118.809372,55.4874573,5649.17041,-0.965929747,0,0.258804798,0,1,0,-0.258804798,0,-0.965929747)
-SP="Default"
-end
-else
-MMon="Mercenary"
-MPos=CFrame.new(-986.774475,72.8755951,1088.44653,-0.656062722,0,0.754706323,0,1,0,-0.754706323,0,-0.656062722)
-SP="DressTown"
-end
-else
-MMon="FactoryStaff"
-MPos=CFrame.new(-105.889565,72.8076935,-670.247986,-0.965929747,0,-0.258804798,0,1,0,0.258804798,0,-0.965929747)
-SP="Bar"
-end
-end
-functionCheckQuest()
-MyLevel=game:GetService("Players").LocalPlayer.Data.Level.Value
-ifWorld1then
-ifMyLevel>=1andMyLevel<=9orSelectMonster=="Bandit"then
-Mon="Bandit"
-LevelQuest=1
-NameQuest="BanditQuest1"
-NameMon="Bandit"
-CFrameQuest=CFrame.new(1059.37195,15.4495068,1550.4231,0.939700544,-0,-0.341998369,-0,1,-0,0.341998369,-0,0.939700544)
-CFrameMon=CFrame.new(1045.962646484375,27.00250816345215,1560.8203125)
-elseif(MyLevel<10orMyLevel>14)andSelectMonster~="Monkey"then
-if(MyLevel<15orMyLevel>29)andSelectMonster~="Gorilla"then
-if(MyLevel<30orMyLevel>39)andSelectMonster~="Pirate"then
-if(MyLevel<40orMyLevel>59)andSelectMonster~="Brute"then
-ifMyLevel>=60andMyLevel<=74orSelectMonster=="DesertBandit"then
-Mon="DesertBandit"
-LevelQuest=1
-NameQuest="DesertQuest"
-NameMon="DesertBandit"
-CFrameQuest=CFrame.new(894.488647,5.14000702,4392.43359,0.819155693,-0,-0.573571265,-0,1,-0,0.573571265,-0,0.819155693)
-CFrameMon=CFrame.new(924.7998046875,6.44867467880249,4481.5859375)
-elseif(MyLevel<75orMyLevel>89)andSelectMonster~="DesertOfficer"then
-if(MyLevel<90orMyLevel>99)andSelectMonster~="SnowBandit"then
-ifMyLevel>=100andMyLevel<=119orSelectMonster=="Snowman"then
-Mon="Snowman"
-LevelQuest=2
-NameQuest="SnowQuest"
-NameMon="Snowman"
-CFrameQuest=CFrame.new(1389.74451,88.1519318,-1298.90796,-0.342042685,-0,0.939684391,-0,1,-0,-0.939684391,-0,-0.342042685)
-CFrameMon=CFrame.new(1201.6412353515625,144.57958984375,-1550.0670166015625)
-elseif(MyLevel<120orMyLevel>149)andSelectMonster~="ChiefPettyOfficer"then
-if(MyLevel<150orMyLevel>174)andSelectMonster~="SkyBandit"then
-if(MyLevel<175orMyLevel>189)andSelectMonster~="DarkMaster"then
-ifMyLevel>=190andMyLevel<=209orSelectMonster=="Prisoner"then
-Mon="Prisoner"
-LevelQuest=1
-NameQuest="PrisonerQuest"
-NameMon="Prisoner"
-CFrameQuest=CFrame.new(5308.93115,1.65517521,475.120514,-0.0894274712,-5.00292918E-9,-0.995993316,1.60817859E-9,1,-5.16744869E-9,0.995993316,-2.06384709E-9,-0.0894274712)
-CFrameMon=CFrame.new(5098.9736328125,-0.3204058110713959,474.2373352050781)
-elseif(MyLevel<210orMyLevel>249)andSelectMonster~="DangerousPrisone"then
-ifMyLevel>=250andMyLevel<=274orSelectMonster=="TogaWarrior"then
-Mon="TogaWarrior"
-LevelQuest=1
-NameQuest="ColosseumQuest"
-NameMon="TogaWarrior"
-CFrameQuest=CFrame.new(-1580.04663,6.35000277,-2986.47534,-0.515037298,-0,-0.857167721,-0,1,-0,0.857167721,-0,-0.515037298)
-CFrameMon=CFrame.new(-1820.21484375,51.68385696411133,-2740.6650390625)
-elseif(MyLevel<275orMyLevel>299)andSelectMonster~="Gladiator"then
-if(MyLevel<300orMyLevel>324)andSelectMonster~="MilitarySoldier"then
-if(MyLevel<325orMyLevel>374)andSelectMonster~="MilitarySpy"then
-if(MyLevel<375orMyLevel>399)andSelectMonster~="FishmanWarrior"then
-if(MyLevel<400orMyLevel>449)andSelectMonster~="FishmanCommando"then
-ifMyLevel>=450andMyLevel<=474orSelectMonster=="God'sGuard"then
-Mon="God'sGuard"
-LevelQuest=1
-NameQuest="SkyExp1Quest"
-NameMon="God'sGuard"
-CFrameQuest=CFrame.new(-4721.88867,843.874695,-1949.96643,0.996191859,-0,-0.0871884301,-0,1,-0,0.0871884301,-0,0.996191859)
-CFrameMon=CFrame.new(-4710.04296875,845.2769775390625,-1927.3079833984375)
-if_G.AutoFarmand(CFrameQuest.Position-game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude>10000then
-game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(-4607.82275,872.54248,-1667.55688))
-end
-elseifMyLevel>=475andMyLevel<=524orSelectMonster=="Shanda"then
-Mon="Shanda"
-LevelQuest=2
-NameQuest="SkyExp1Quest"
-NameMon="Shanda"
-CFrameQuest=CFrame.new(-7859.09814,5544.19043,-381.476196,-0.422592998,-0,0.906319618,-0,1,-0,-0.906319618,-0,-0.422592998)
-CFrameMon=CFrame.new(-7678.48974609375,5566.40380859375,-497.2156066894531)
-if_G.AutoFarmand(CFrameQuest.Position-game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude>10000then
-game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(-7894.6176757813,5547.1416015625,-380.29119873047))
-end
-elseifMyLevel>=525andMyLevel<=549orSelectMonster=="RoyalSquad"then
-Mon="RoyalSquad"
-LevelQuest=1
-NameQuest="SkyExp2Quest"
-NameMon="RoyalSquad"
-CFrameQuest=CFrame.new(-7906.81592,5634.6626,-1411.99194,-0,-0,-1,-0,1,-0,1,-0,-0)
-CFrameMon=CFrame.new(-7624.25244140625,5658.13330078125,-1467.354248046875)
-elseif(MyLevel<550orMyLevel>624)andSelectMonster~="RoyalSoldier"then
-ifMyLevel>=625andMyLevel<=649orSelectMonster=="GalleyPirate"then
-Mon="GalleyPirate"
-LevelQuest=1
-NameQuest="FountainQuest"
-NameMon="GalleyPirate"
-CFrameQuest=CFrame.new(5259.81982,37.3500175,4050.0293,0.087131381,-0,0.996196866,-0,1,-0,-0.996196866,-0,0.087131381)
-CFrameMon=CFrame.new(5551.02197265625,78.90135192871094,3930.412841796875)
-elseifMyLevel>=650orSelectMonster=="GalleyCaptain"then
-Mon="GalleyCaptain"
-LevelQuest=2
-NameQuest="FountainQuest"
-NameMon="GalleyCaptain"
-CFrameQuest=CFrame.new(5259.81982,37.3500175,4050.0293,0.087131381,-0,0.996196866,-0,1,-0,-0.996196866,-0,0.087131381)
-CFrameMon=CFrame.new(5441.95166015625,42.50205993652344,4950.09375)
-end
-else
-Mon="RoyalSoldier"
-LevelQuest=2
-NameQuest="SkyExp2Quest"
-NameMon="RoyalSoldier"
-CFrameQuest=CFrame.new(-7906.81592,5634.6626,-1411.99194,-0,-0,-1,-0,1,-0,1,-0,-0)
-CFrameMon=CFrame.new(-7836.75341796875,5645.6640625,-1790.6236572265625)
-end
-else
-Mon="FishmanCommando"
-LevelQuest=2
-NameQuest="FishmanQuest"
-NameMon="FishmanCommando"
-CFrameQuest=CFrame.new(61122.65234375,18.497442245483,1569.3997802734)
-CFrameMon=CFrame.new(61922.6328125,18.482830047607422,1493.934326171875)
-if_G.AutoFarmand(CFrameQuest.Position-game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude>10000then
-game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(61163.8515625,11.6796875,1819.7841796875))
-end
-end
-else
-Mon="FishmanWarrior"
-LevelQuest=1
-NameQuest="FishmanQuest"
-NameMon="FishmanWarrior"
-CFrameQuest=CFrame.new(61122.65234375,18.497442245483,1569.3997802734)
-CFrameMon=CFrame.new(60878.30078125,18.482830047607422,1543.7574462890625)
-if_G.AutoFarmand(CFrameQuest.Position-game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude>10000then
-game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(61163.8515625,11.6796875,1819.7841796875))
-end
-end
-else
-Mon="MilitarySpy"
-LevelQuest=2
-NameQuest="MagmaQuest"
-NameMon="MilitarySpy"
-CFrameQuest=CFrame.new(-5313.37012,10.9500084,8515.29395,-0.499959469,-0,0.866048813,-0,1,-0,-0.866048813,-0,-0.499959469)
-CFrameMon=CFrame.new(-5802.8681640625,86.26241302490234,8828.859375)
-end
-else
-Mon="MilitarySoldier"
-LevelQuest=1
-NameQuest="MagmaQuest"
-NameMon="MilitarySoldier"
-CFrameQuest=CFrame.new(-5313.37012,10.9500084,8515.29395,-0.499959469,-0,0.866048813,-0,1,-0,-0.866048813,-0,-0.499959469)
-CFrameMon=CFrame.new(-5411.16455078125,11.081554412841797,8454.29296875)
-end
-else
-Mon="Gladiator"
-LevelQuest=2
-NameQuest="ColosseumQuest"
-NameMon="Gladiator"
-CFrameQuest=CFrame.new(-1580.04663,6.35000277,-2986.47534,-0.515037298,-0,-0.857167721,-0,1,-0,0.857167721,-0,-0.515037298)
-CFrameMon=CFrame.new(-1292.838134765625,56.380882263183594,-3339.031494140625)
-end
-else
-Mon="DangerousPrisoner"
-LevelQuest=2
-NameQuest="PrisonerQuest"
-NameMon="DangerousPrisoner"
-CFrameQuest=CFrame.new(5308.93115,1.65517521,475.120514,-0.0894274712,-5.00292918E-9,-0.995993316,1.60817859E-9,1,-5.16744869E-9,0.995993316,-2.06384709E-9,-0.0894274712)
-CFrameMon=CFrame.new(5654.5634765625,15.633401870727539,866.2991943359375)
-end
-else
-Mon="DarkMaster"
-LevelQuest=2
-NameQuest="SkyQuest"
-NameMon="DarkMaster"
-CFrameQuest=CFrame.new(-4839.53027,716.368591,-2619.44165,0.866007268,-0,0.500031412,-0,1,-0,-0.500031412,-0,0.866007268)
-CFrameMon=CFrame.new(-5259.8447265625,391.3976745605469,-2229.035400390625)
-end
-else
-Mon="SkyBandit"
-LevelQuest=1
-NameQuest="SkyQuest"
-NameMon="SkyBandit"
-CFrameQuest=CFrame.new(-4839.53027,716.368591,-2619.44165,0.866007268,-0,0.500031412,-0,1,-0,-0.500031412,-0,0.866007268)
-CFrameMon=CFrame.new(-4953.20703125,295.74420166015625,-2899.22900390625)
-end
-else
-Mon="ChiefPettyOfficer"
-LevelQuest=1
-NameQuest="MarineQuest2"
-NameMon="ChiefPettyOfficer"
-CFrameQuest=CFrame.new(-5039.58643,27.3500385,4324.68018,-0,-0,-1,-0,1,-0,1,-0,-0)
-CFrameMon=CFrame.new(-4881.23095703125,22.65204429626465,4273.75244140625)
-end
-else
-Mon="SnowBandit"
-LevelQuest=1
-NameQuest="SnowQuest"
-NameMon="SnowBandit"
-CFrameQuest=CFrame.new(1389.74451,88.1519318,-1298.90796,-0.342042685,-0,0.939684391,-0,1,-0,-0.939684391,-0,-0.342042685)
-CFrameMon=CFrame.new(1354.347900390625,87.27277374267578,-1393.946533203125)
-end
-else
-Mon="DesertOfficer"
-LevelQuest=2
-NameQuest="DesertQuest"
-NameMon="DesertOfficer"
-CFrameQuest=CFrame.new(894.488647,5.14000702,4392.43359,0.819155693,-0,-0.573571265,-0,1,-0,0.573571265,-0,0.819155693)
-CFrameMon=CFrame.new(1608.2822265625,8.614224433898926,4371.00732421875)
-end
-else
-Mon="Brute"
-LevelQuest=2
-NameQuest="BuggyQuest1"
-NameMon="Brute"
-CFrameQuest=CFrame.new(-1141.07483,4.10001802,3831.5498,0.965929627,-0,-0.258804798,-0,1,-0,0.258804798,-0,0.965929627)
-CFrameMon=CFrame.new(-1140.083740234375,14.809885025024414,4322.92138671875)
-end
-else
-Mon="Pirate"
-LevelQuest=1
-NameQuest="BuggyQuest1"
-NameMon="Pirate"
-CFrameQuest=CFrame.new(-1141.07483,4.10001802,3831.5498,0.965929627,-0,-0.258804798,-0,1,-0,0.258804798,-0,0.965929627)
-CFrameMon=CFrame.new(-1103.513427734375,13.752052307128906,3896.091064453125)
-end
-else
-Mon="Gorilla"
-LevelQuest=2
-NameQuest="JungleQuest"
-NameMon="Gorilla"
-CFrameQuest=CFrame.new(-1598.08911,35.5501175,153.377838,-0,-0,1,-0,1,-0,-1,-0,-0)
-CFrameMon=CFrame.new(-1129.8836669921875,40.46354675292969,-525.4237060546875)
-end
-else
-Mon="Monkey"
-LevelQuest=1
-NameQuest="JungleQuest"
-NameMon="Monkey"
-CFrameQuest=CFrame.new(-1598.08911,35.5501175,153.377838,-0,-0,1,-0,1,-0,-1,-0,-0)
-CFrameMon=CFrame.new(-1448.51806640625,67.85301208496094,11.46579647064209)
-end
-elseifnotWorld2then
-ifWorld3then
-ifMyLevel>=1500andMyLevel<=1524orSelectMonster=="PirateMillionaire"then
-Mon="PirateMillionaire"
-LevelQuest=1
-NameQuest="PiratePortQuest"
-NameMon="PirateMillionaire"
-CFrameQuest=CFrame.new(-450.104645,107.681458,5950.72607,0.957107544,-0,-0.289732844,-0,1,-0,0.289732844,-0,0.957107544)
-CFrameMon=CFrame.new(-245.9963836669922,47.30615234375,5584.1005859375)
-elseif(MyLevel<1525orMyLevel>1574)andSelectMonster~="PistolBillionaire"then
-ifMyLevel>=1575andMyLevel<=1599orSelectMonster=="DragonCrewWarrior"then
-Mon="DragonCrewWarrior"
-LevelQuest=1
-NameQuest="DragonCrewQuest"
-NameMon="DragonCrewWarrior"
-CFrameQuest=CFrame.new(6750.4931640625,127.44916534423828,-711.0308837890625)
-CFrameMon=CFrame.new(6709.76367,52.3442993,-1139.02966,-0.763515472,-0,0.645789504,-0,1,-0,-0.645789504,-0,-0.763515472)
-elseifMyLevel>=1600andMyLevel<=1624orSelectMonster=="DragonCrewArcher"then
-Mon="DragonCrewArcher"
-NameQuest="DragonCrewQuest"
-LevelQuest=2
-NameMon="DragonCrewArcher"
-CFrameQuest=CFrame.new(6750.4931640625,127.44916534423828,-711.0308837890625)
-CFrameMon=CFrame.new(6668.76172,481.376923,329.12207,-0.121787429,-0,-0.992556155,-0,1,-0,0.992556155,-0,-0.121787429)
-elseif(MyLevel<1625orMyLevel>1649)andSelectMonster~="HydraEnforcer"then
-if(MyLevel<1650orMyLevel>1699)andSelectMonster~="VenomousAssailant"then
-if(MyLevel<1700orMyLevel>1724)andSelectMonster~="MarineCommodore"then
-if(MyLevel<1725orMyLevel>1774)andSelectMonster~="MarineRearAdmiral"then
-if(MyLevel<1775orMyLevel>1799)andSelectMonster~="FishmanRaider"then
-ifMyLevel>=1800andMyLevel<=1824orSelectMonster=="FishmanCaptain"then
-Mon="FishmanCaptain"
-LevelQuest=2
-NameQuest="DeepForestIsland3"
-NameMon="FishmanCaptain"
-CFrameQuest=CFrame.new(-10581.6563,330.872955,-8761.18652,-0.882952213,-0,0.469463557,-0,1,-0,-0.469463557,-0,-0.882952213)
-CFrameMon=CFrame.new(-10994.701171875,352.38140869140625,-9002.1103515625)
-elseif(MyLevel<1825orMyLevel>1849)andSelectMonster~="ForestPirate"then
-if(MyLevel<1850orMyLevel>1899)andSelectMonster~="MythologicalPirate"then
-ifMyLevel>=1900andMyLevel<=1924orSelectMonster=="JunglePirate"then
-Mon="JunglePirate"
-LevelQuest=1
-NameQuest="DeepForestIsland2"
-NameMon="JunglePirate"
-CFrameQuest=CFrame.new(-12680.3818,389.971039,-9902.01953,-0.0871315002,-0,0.996196866,-0,1,-0,-0.996196866,-0,-0.0871315002)
-CFrameMon=CFrame.new(-12256.16015625,331.73828125,-10485.8369140625)
-elseifMyLevel>=1925andMyLevel<=1974orSelectMonster=="MusketeerPirate"then
-Mon="MusketeerPirate"
-LevelQuest=2
-NameQuest="DeepForestIsland2"
-NameMon="MusketeerPirate"
-CFrameQuest=CFrame.new(-12680.3818,389.971039,-9902.01953,-0.0871315002,-0,0.996196866,-0,1,-0,-0.996196866,-0,-0.0871315002)
-CFrameMon=CFrame.new(-13457.904296875,391.545654296875,-9859.177734375)
-elseifMyLevel>=1975andMyLevel<=1999orSelectMonster=="RebornSkeleton"then
-Mon="RebornSkeleton"
-LevelQuest=1
-NameQuest="HauntedQuest1"
-NameMon="RebornSkeleton"
-CFrameQuest=CFrame.new(-9479.2168,141.215088,5566.09277,-0,-0,1,-0,1,-0,-1,-0,-0)
-CFrameMon=CFrame.new(-8763.7236328125,165.72299194335938,6159.86181640625)
-elseif(MyLevel<2000orMyLevel>2024)andSelectMonster~="LivingZombie"then
-ifMyLevel>=2025andMyLevel<=2049orSelectMonster=="DemonicSoul"then
-Mon="DemonicSoul"
-LevelQuest=1
-NameQuest="HauntedQuest2"
-NameMon="DemonicSoul"
-CFrameQuest=CFrame.new(-9516.99316,172.017181,6078.46533,-0,-0,-1,-0,1,-0,1,-0,-0)
-CFrameMon=CFrame.new(-9505.8720703125,172.10482788085938,6158.9931640625)
-elseifMyLevel>=2050andMyLevel<=2074orSelectMonster=="PosessedMummy"then
-Mon="PosessedMummy"
-LevelQuest=2
-NameQuest="HauntedQuest2"
-NameMon="PosessedMummy"
-CFrameQuest=CFrame.new(-9516.99316,172.017181,6078.46533,-0,-0,-1,-0,1,-0,1,-0,-0)
-CFrameMon=CFrame.new(-9582.0224609375,6.251527309417725,6205.478515625)
-elseif(MyLevel<2075orMyLevel>2099)andSelectMonster~="PeanutScout"then
-ifMyLevel>=2100andMyLevel<=2124orSelectMonster=="PeanutPresident"then
-Mon="PeanutPresident"
-LevelQuest=2
-NameQuest="NutsIslandQuest"
-NameMon="PeanutPresident"
-CFrameQuest=CFrame.new(-2104.3908691406,38.104167938232,-10194.21875,-0,-0,-1,-0,1,-0,1,-0,-0)
-CFrameMon=CFrame.new(-1859.35400390625,38.10316848754883,-10422.4296875)
-elseifMyLevel>=2125andMyLevel<=2149orSelectMonster=="IceCreamChef"then
-Mon="IceCreamChef"
-LevelQuest=1
-NameQuest="IceCreamIslandQuest"
-NameMon="IceCreamChef"
-CFrameQuest=CFrame.new(-820.64825439453,65.819526672363,-10965.795898438,-0,-0,-1,-0,1,-0,1,-0,-0)
-CFrameMon=CFrame.new(-872.24658203125,65.81957244873047,-10919.95703125)
-elseifMyLevel>=2150andMyLevel<=2199orSelectMonster=="IceCreamCommander"then
-Mon="IceCreamCommander"
-LevelQuest=2
-NameQuest="IceCreamIslandQuest"
-NameMon="IceCreamCommander"
-CFrameQuest=CFrame.new(-820.64825439453,65.819526672363,-10965.795898438,-0,-0,-1,-0,1,-0,1,-0,-0)
-CFrameMon=CFrame.new(-558.06103515625,112.04895782470703,-11290.7744140625)
-elseifMyLevel>=2200andMyLevel<=2224orSelectMonster=="CookieCrafter"then
-Mon="CookieCrafter"
-LevelQuest=1
-NameQuest="CakeQuest1"
-NameMon="CookieCrafter"
-CFrameQuest=CFrame.new(-2021.32007,37.7982254,-12028.7295,0.957576931,-8.80302053E-8,0.288177818,6.9301187E-8,1,7.51931211E-8,-0.288177818,-5.2032135E-8,0.957576931)
-CFrameMon=CFrame.new(-2374.13671875,37.79826354980469,-12125.30859375)
-elseif(MyLevel<2225orMyLevel>2249)andSelectMonster~="CakeGuard"then
-ifMyLevel>=2250andMyLevel<=2274orSelectMonster=="BakingStaff"then
-Mon="BakingStaff"
-LevelQuest=1
-NameQuest="CakeQuest2"
-NameMon="BakingStaff"
-CFrameQuest=CFrame.new(-1927.91602,37.7981339,-12842.5391,-0.96804446,4.22142143E-8,0.250778586,4.74911062E-8,1,1.49904711E-8,-0.250778586,2.64211941E-8,-0.96804446)
-CFrameMon=CFrame.new(-1887.8099365234375,77.6185073852539,-12998.3505859375)
-elseifMyLevel>=2275andMyLevel<=2299orSelectMonster=="HeadBaker"then
-Mon="HeadBaker"
-LevelQuest=2
-NameQuest="CakeQuest2"
-NameMon="HeadBaker"
-CFrameQuest=CFrame.new(-1927.91602,37.7981339,-12842.5391,-0.96804446,4.22142143E-8,0.250778586,4.74911062E-8,1,1.49904711E-8,-0.250778586,2.64211941E-8,-0.96804446)
-CFrameMon=CFrame.new(-2216.188232421875,82.884521484375,-12869.2939453125)
-elseif(MyLevel<2300orMyLevel>2324)andSelectMonster~="CocoaWarrior"then
-ifMyLevel>=2325andMyLevel<=2349orSelectMonster=="ChocolateBarBattler"then
-Mon="ChocolateBarBattler"
-LevelQuest=2
-NameQuest="ChocQuest1"
-NameMon="ChocolateBarBattler"
-CFrameQuest=CFrame.new(233.22836303710938,29.876001358032227,-12201.2333984375)
-CFrameMon=CFrame.new(582.590576171875,77.18809509277344,-12463.162109375)
-elseifMyLevel>=2350andMyLevel<=2374orSelectMonster=="SweetThief"then
-Mon="SweetThief"
-LevelQuest=1
-NameQuest="ChocQuest2"
-NameMon="SweetThief"
-CFrameQuest=CFrame.new(150.5066375732422,30.693693161010742,-12774.5029296875)
-CFrameMon=CFrame.new(165.1884765625,76.05885314941406,-12600.8369140625)
-elseifMyLevel>=2375andMyLevel<=2399orSelectMonster=="CandyRebel"then
-Mon="CandyRebel"
-LevelQuest=2
-NameQuest="ChocQuest2"
-NameMon="CandyRebel"
-CFrameQuest=CFrame.new(150.5066375732422,30.693693161010742,-12774.5029296875)
-CFrameMon=CFrame.new(134.86563110351562,77.2476806640625,-12876.5478515625)
-elseif(MyLevel<2400orMyLevel>2424)andSelectMonster~="CandyPirate"then
-ifMyLevel>=2425andMyLevel<=2449orSelectMonster=="SnowDemon"then
-Mon="SnowDemon"
-LevelQuest=2
-NameQuest="CandyQuest1"
-NameMon="SnowDemon"
-CFrameQuest=CFrame.new(-1150.0400390625,20.378934860229492,-14446.3349609375)
-CFrameMon=CFrame.new(-880.2006225585938,71.24776458740234,-14538.609375)
-elseifMyLevel>=2450andMyLevel<=2474orSelectMonster=="IsleOutlaw"then
-Mon="IsleOutlaw"
-LevelQuest=1
-NameQuest="TikiQuest1"
-NameMon="IsleOutlaw"
-CFrameQuest=CFrame.new(-16547.748046875,61.13533401489258,-173.41360473632812)
-CFrameMon=CFrame.new(-16442.814453125,116.13899993896484,-264.4637756347656)
-elseif(MyLevel<2475orMyLevel>2524)andSelectMonster~="IslandBoy"then
-ifMyLevel>=2525andMyLevel<=2550orSelectMonster=="IsleChampion"then
-Mon="IsleChampion"
-LevelQuest=2
-NameQuest="TikiQuest2"
-NameMon="IsleChampion"
-CFrameQuest=CFrame.new(-16539.078125,55.68632888793945,1051.5738525390625)
-CFrameMon=CFrame.new(-16641.6796875,235.7825469970703,1031.282958984375)
-elseif(MyLevel<2550orMyLevel>2574)andSelectMonster~="SerpentHunter"then
-ifMyLevel>=2575orSelectMonster=="SkullSlayer"then
-Mon="SkullSlayer"
-LevelQuest=2
-NameQuest="TikiQuest3"
-NameMon="SkullSlayer"
-CFrameQuest=CFrame.new(-16665.1914,104.596405,1579.69434,0.951068401,-0,-0.308980465,-0,1,-0,0.308980465,-0,0.951068401)
-CFrameMon=CFrame.new(-16855.043,122.457253,1478.15308,-0.999392271,-0,-0.0348687991,-0,1,-0,0.0348687991,-0,-0.999392271)
-end
-else
-Mon="SerpentHunter"
-LevelQuest=1
-NameQuest="TikiQuest3"
-NameMon="SerpentHunter"
-CFrameQuest=CFrame.new(-16665.1914,104.596405,1579.69434,0.951068401,-0,-0.308980465,-0,1,-0,0.308980465,-0,0.951068401)
-CFrameMon=CFrame.new(-16521.0625,106.09285,1488.78467,0.469467044,-0,0.882950008,-0,1,-0,-0.882950008,-0,0.469467044)
-end
-else
-Mon="IslandBoy"
-LevelQuest=2
-NameQuest="TikiQuest1"
-NameMon="IslandBoy"
-CFrameQuest=CFrame.new(-16547.748046875,61.13533401489258,-173.41360473632812)
-CFrameMon=CFrame.new(-16901.26171875,84.06756591796875,-192.88906860351562)
-end
-else
-Mon="CandyPirate"
-LevelQuest=1
-NameQuest="CandyQuest1"
-NameMon="CandyPirate"
-CFrameQuest=CFrame.new(-1150.0400390625,20.378934860229492,-14446.3349609375)
-CFrameMon=CFrame.new(-1310.5003662109375,26.016523361206055,-14562.404296875)
-end
-else
-Mon="CocoaWarrior"
-LevelQuest=1
-NameQuest="ChocQuest1"
-NameMon="CocoaWarrior"
-CFrameQuest=CFrame.new(233.22836303710938,29.876001358032227,-12201.2333984375)
-CFrameMon=CFrame.new(-21.55328369140625,80.57499694824219,-12352.3876953125)
-end
-else
-Mon="CakeGuard"
-LevelQuest=2
-NameQuest="CakeQuest1"
-NameMon="CakeGuard"
-CFrameQuest=CFrame.new(-2021.32007,37.7982254,-12028.7295,0.957576931,-8.80302053E-8,0.288177818,6.9301187E-8,1,7.51931211E-8,-0.288177818,-5.2032135E-8,0.957576931)
-CFrameMon=CFrame.new(-1598.3070068359375,43.773197174072266,-12244.5810546875)
-end
-else
-Mon="PeanutScout"
-LevelQuest=1
-NameQuest="NutsIslandQuest"
-NameMon="PeanutScout"
-CFrameQuest=CFrame.new(-2104.3908691406,38.104167938232,-10194.21875,-0,-0,-1,-0,1,-0,1,-0,-0)
-CFrameMon=CFrame.new(-2143.241943359375,47.72198486328125,-10029.9951171875)
-end
-else
-Mon="LivingZombie"
-LevelQuest=2
-NameQuest="HauntedQuest1"
-NameMon="LivingZombie"
-CFrameQuest=CFrame.new(-9479.2168,141.215088,5566.09277,-0,-0,1,-0,1,-0,-1,-0,-0)
-CFrameMon=CFrame.new(-10144.1318359375,138.62667846679688,5838.0888671875)
-end
-else
-Mon="MythologicalPirate"
-LevelQuest=2
-NameQuest="DeepForestIsland"
-NameMon="MythologicalPirate"
-CFrameQuest=CFrame.new(-13234.04,331.488495,-7625.40137,0.707134247,-0,-0.707079291,-0,1,-0,0.707079291,-0,0.707134247)
-CFrameMon=CFrame.new(-13680.607421875,501.08154296875,-6991.189453125)
-end
-else
-Mon="ForestPirate"
-LevelQuest=1
-NameQuest="DeepForestIsland"
-NameMon="ForestPirate"
-CFrameQuest=CFrame.new(-13234.04,331.488495,-7625.40137,0.707134247,-0,-0.707079291,-0,1,-0,0.707079291,-0,0.707134247)
-CFrameMon=CFrame.new(-13274.478515625,332.3781433105469,-7769.58056640625)
-end
-else
-Mon="FishmanRaider"
-LevelQuest=1
-NameQuest="DeepForestIsland3"
-NameMon="FishmanRaider"
-CFrameQuest=CFrame.new(-10581.6563,330.872955,-8761.18652,-0.882952213,-0,0.469463557,-0,1,-0,-0.469463557,-0,-0.882952213)
-CFrameMon=CFrame.new(-10407.5263671875,331.76263427734375,-8368.5166015625)
-end
-else
-Mon="MarineRearAdmiral"
-LevelQuest=2
-NameQuest="MarineTreeIsland"
-NameMon="MarineRearAdmiral"
-CFrameQuest=CFrame.new(2481.09228515625,74.27049255371094,-6779.640625)
-CFrameMon=CFrame.new(3761.81006,123.912003,-6823.52197,0.961273968,-0,0.275594592,-0,1,-0,-0.275594592,-0,0.961273968)
-end
-else
-Mon="MarineCommodore"
-LevelQuest=1
-NameQuest="MarineTreeIsland"
-NameMon="MarineCommodore"
-CFrameQuest=CFrame.new(2481.09228515625,74.27049255371094,-6779.640625)
-CFrameMon=CFrame.new(2577.25391,75.6100006,-7739.87207,0.499959469,-0,0.866048813,-0,1,-0,-0.866048813,-0,0.499959469)
-end
-else
-Mon="VenomousAssailant"
-NameQuest="VenomCrewQuest"
-LevelQuest=2
-NameMon="VenomousAssailant"
-CFrameQuest=CFrame.new(5206.40185546875,1004.10498046875,748.3504638671875)
-CFrameMon=CFrame.new(4674.92676,1134.82654,996.308838,0.731321394,-0,-0.682033002,-0,1,-0,0.682033002,-0,0.731321394)
-end
-else
-Mon="HydraEnforcer"
-NameQuest="VenomCrewQuest"
-LevelQuest=1
-NameMon="HydraEnforcer"
-CFrameQuest=CFrame.new(5206.40185546875,1004.10498046875,748.3504638671875)
-CFrameMon=CFrame.new(4547.11523,1003.10217,334.194824,0.388810456,-0,-0.921317935,-0,1,-0,0.921317935,-0,0.388810456)
-end
-else
-Mon="PistolBillionaire"
-LevelQuest=2
-NameQuest="PiratePortQuest"
-NameMon="PistolBillionaire"
-CFrameQuest=CFrame.new(-450.104645,107.681458,5950.72607,0.957107544,-0,-0.289732844,-0,1,-0,0.289732844,-0,0.957107544)
-CFrameMon=CFrame.new(-54.8110352,83.7698746,5947.84082,-0.965929747,-0,0.258804798,-0,1,-0,-0.258804798,-0,-0.965929747)
-end
-end
-elseif(MyLevel<700orMyLevel>724)andSelectMonster~="Raider"then
-ifMyLevel>=725andMyLevel<=774orSelectMonster=="Mercenary"then
-Mon="Mercenary"
-LevelQuest=2
-NameQuest="Area1Quest"
-NameMon="Mercenary"
-CFrameQuest=CFrame.new(-429.543518,71.7699966,1836.18188,-0.22495985,-0,-0.974368095,-0,1,-0,0.974368095,-0,-0.22495985)
-CFrameMon=CFrame.new(-1004.3244018554688,80.15886688232422,1424.619384765625)
-elseifMyLevel>=775andMyLevel<=799orSelectMonster=="SwanPirate"then
-Mon="SwanPirate"
-LevelQuest=1
-NameQuest="Area2Quest"
-NameMon="SwanPirate"
-CFrameQuest=CFrame.new(638.43811,71.769989,918.282898,0.139203906,-0,0.99026376,-0,1,-0,-0.99026376,-0,0.139203906)
-CFrameMon=CFrame.new(1068.664306640625,137.61428833007812,1322.1060791015625)
-elseif(MyLevel<800orMyLevel>874)andSelectMonster~="FactoryStaff"then
-ifMyLevel>=875andMyLevel<=899orSelectMonster=="MarineLieutenant"then
-Mon="MarineLieutenant"
-LevelQuest=1
-NameQuest="MarineQuest3"
-NameMon="MarineLieutenant"
-CFrameQuest=CFrame.new(-2440.79639,71.7140732,-3216.06812,0.866007268,-0,0.500031412,-0,1,-0,-0.500031412,-0,0.866007268)
-CFrameMon=CFrame.new(-2821.372314453125,75.89727783203125,-3070.089111328125)
-elseifMyLevel>=900andMyLevel<=949orSelectMonster=="MarineCaptain"then
-Mon="MarineCaptain"
-LevelQuest=2
-NameQuest="MarineQuest3"
-NameMon="MarineCaptain"
-CFrameQuest=CFrame.new(-2440.79639,71.7140732,-3216.06812,0.866007268,-0,0.500031412,-0,1,-0,-0.500031412,-0,0.866007268)
-CFrameMon=CFrame.new(-1861.2310791015625,80.17658233642578,-3254.697509765625)
-elseif(MyLevel<950orMyLevel>974)andSelectMonster~="Zombie"then
-ifMyLevel>=975andMyLevel<=999orSelectMonster=="Vampire"then
-Mon="Vampire"
-LevelQuest=2
-NameQuest="ZombieQuest"
-NameMon="Vampire"
-CFrameQuest=CFrame.new(-5497.06152,47.5923004,-795.237061,-0.29242146,-0,-0.95628953,-0,1,-0,0.95628953,-0,-0.29242146)
-CFrameMon=CFrame.new(-6037.66796875,32.18463897705078,-1340.6597900390625)
-elseif(MyLevel<1000orMyLevel>1049)andSelectMonster~="SnowTrooper"then
-ifMyLevel>=1050andMyLevel<=1099orSelectMonster=="WinterWarrior"then
-Mon="WinterWarrior"
-LevelQuest=2
-NameQuest="SnowMountainQuest"
-NameMon="WinterWarrior"
-CFrameQuest=CFrame.new(609.858826,400.119904,-5372.25928,-0.374604106,-0,0.92718488,-0,1,-0,-0.92718488,-0,-0.374604106)
-CFrameMon=CFrame.new(1142.7451171875,475.6398010253906,-5199.41650390625)
-elseifMyLevel>=1100andMyLevel<=1124orSelectMonster=="LabSubordinate"then
-Mon="LabSubordinate"
-LevelQuest=1
-NameQuest="IceSideQuest"
-NameMon="LabSubordinate"
-CFrameQuest=CFrame.new(-6064.06885,15.2422857,-4902.97852,0.453972578,-0,-0.891015649,-0,1,-0,0.891015649,-0,0.453972578)
-CFrameMon=CFrame.new(-5707.4716796875,15.951709747314453,-4513.39208984375)
-elseifMyLevel>=1125andMyLevel<=1174orSelectMonster=="HornedWarrior"then
-Mon="HornedWarrior"
-LevelQuest=2
-NameQuest="IceSideQuest"
-NameMon="HornedWarrior"
-CFrameQuest=CFrame.new(-6064.06885,15.2422857,-4902.97852,0.453972578,-0,-0.891015649,-0,1,-0,0.891015649,-0,0.453972578)
-CFrameMon=CFrame.new(-6341.36669921875,15.951770782470703,-5723.162109375)
-elseif(MyLevel<1175orMyLevel>1199)andSelectMonster~="MagmaNinja"then
-if(MyLevel<1200orMyLevel>1249)andSelectMonster~="LavaPirate"then
-ifMyLevel>=1250andMyLevel<=1274orSelectMonster=="ShipDeckhand"then
-Mon="ShipDeckhand"
-LevelQuest=1
-NameQuest="ShipQuest1"
-NameMon="ShipDeckhand"
-CFrameQuest=CFrame.new(1037.80127,125.092171,32911.6016)
-CFrameMon=CFrame.new(1212.0111083984375,150.79205322265625,33059.24609375)
-if_G.AutoFarmand(CFrameQuest.Position-game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude>10000then
-game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(923.21252441406,126.9760055542,32852.83203125))
-end
-elseif(MyLevel<1275orMyLevel>1299)andSelectMonster~="ShipEngineer"then
-ifMyLevel>=1300andMyLevel<=1324orSelectMonster=="ShipSteward"then
-Mon="ShipSteward"
-LevelQuest=1
-NameQuest="ShipQuest2"
-NameMon="ShipSteward"
-CFrameQuest=CFrame.new(968.80957,125.092171,33244.125)
-CFrameMon=CFrame.new(919.4385375976562,129.55599975585938,33436.03515625)
-if_G.AutoFarmand(CFrameQuest.Position-game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude>10000then
-game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(923.21252441406,126.9760055542,32852.83203125))
-end
-elseif(MyLevel<1325orMyLevel>1349)andSelectMonster~="ShipOfficer"then
-if(MyLevel<1350orMyLevel>1374)andSelectMonster~="ArcticWarrior"then
-ifMyLevel>=1375andMyLevel<=1424orSelectMonster=="SnowLurker"then
-Mon="SnowLurker"
-LevelQuest=2
-NameQuest="FrostQuest"
-NameMon="SnowLurker"
-CFrameQuest=CFrame.new(5667.6582,26.7997818,-6486.08984,-0.933587909,-0,-0.358349502,-0,1,-0,0.358349502,-0,-0.933587909)
-CFrameMon=CFrame.new(5407.07373046875,69.19437408447266,-6880.88037109375)
-elseif(MyLevel<1425orMyLevel>1449)andSelectMonster~="SeaSoldier"then
-ifMyLevel>=1450orSelectMonster=="WaterFighter"then
-Mon="WaterFighter"
-LevelQuest=2
-NameQuest="ForgottenQuest"
-NameMon="WaterFighter"
-CFrameQuest=CFrame.new(-3054.44458,235.544281,-10142.8193,0.990270376,-0,-0.13915664,-0,1,-0,0.13915664,-0,0.990270376)
-CFrameMon=CFrame.new(-3352.9013671875,285.01556396484375,-10534.841796875)
-end
-else
-Mon="SeaSoldier"
-LevelQuest=1
-NameQuest="ForgottenQuest"
-NameMon="SeaSoldier"
-CFrameQuest=CFrame.new(-3054.44458,235.544281,-10142.8193,0.990270376,-0,-0.13915664,-0,1,-0,0.13915664,-0,0.990270376)
-CFrameMon=CFrame.new(-3028.2236328125,64.67451477050781,-9775.4267578125)
-end
-else
-Mon="ArcticWarrior"
-LevelQuest=1
-NameQuest="FrostQuest"
-NameMon="ArcticWarrior"
-CFrameQuest=CFrame.new(5667.6582,26.7997818,-6486.08984,-0.933587909,-0,-0.358349502,-0,1,-0,0.358349502,-0,-0.933587909)
-CFrameMon=CFrame.new(5966.24609375,62.97002029418945,-6179.3828125)
-if_G.AutoFarmand(CFrameQuest.Position-game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude>10000then
-game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(-6508.5581054688,5000.034996032715,-132.83953857422))
-end
-end
-else
-Mon="ShipOfficer"
-LevelQuest=2
-NameQuest="ShipQuest2"
-NameMon="ShipOfficer"
-CFrameQuest=CFrame.new(968.80957,125.092171,33244.125)
-CFrameMon=CFrame.new(1036.0179443359375,181.4390411376953,33315.7265625)
-if_G.AutoFarmand(CFrameQuest.Position-game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude>10000then
-game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(923.21252441406,126.9760055542,32852.83203125))
-end
-end
-else
-Mon="ShipEngineer"
-LevelQuest=2
-NameQuest="ShipQuest1"
-NameMon="ShipEngineer"
-CFrameQuest=CFrame.new(1037.80127,125.092171,32911.6016)
-CFrameMon=CFrame.new(919.4786376953125,43.54401397705078,32779.96875)
-if_G.AutoFarmand(CFrameQuest.Position-game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude>10000then
-game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(923.21252441406,126.9760055542,32852.83203125))
-end
-end
-else
-Mon="LavaPirate"
-LevelQuest=2
-NameQuest="FireSideQuest"
-NameMon="LavaPirate"
-CFrameQuest=CFrame.new(-5428.03174,15.0622921,-5299.43457,-0.882952213,-0,0.469463557,-0,1,-0,-0.469463557,-0,-0.882952213)
-CFrameMon=CFrame.new(-5213.33154296875,49.73788070678711,-4701.451171875)
-end
-else
-Mon="MagmaNinja"
-LevelQuest=1
-NameQuest="FireSideQuest"
-NameMon="MagmaNinja"
-CFrameQuest=CFrame.new(-5428.03174,15.0622921,-5299.43457,-0.882952213,-0,0.469463557,-0,1,-0,-0.469463557,-0,-0.882952213)
-CFrameMon=CFrame.new(-5449.6728515625,76.65874481201172,-5808.20068359375)
-end
-else
-Mon="SnowTrooper"
-LevelQuest=1
-NameQuest="SnowMountainQuest"
-NameMon="SnowTrooper"
-CFrameQuest=CFrame.new(609.858826,400.119904,-5372.25928,-0.374604106,-0,0.92718488,-0,1,-0,-0.92718488,-0,-0.374604106)
-CFrameMon=CFrame.new(549.1473388671875,427.3870544433594,-5563.69873046875)
-end
-else
-Mon="Zombie"
-LevelQuest=1
-NameQuest="ZombieQuest"
-NameMon="Zombie"
-CFrameQuest=CFrame.new(-5497.06152,47.5923004,-795.237061,-0.29242146,-0,-0.95628953,-0,1,-0,0.95628953,-0,-0.29242146)
-CFrameMon=CFrame.new(-5657.77685546875,78.96973419189453,-928.68701171875)
-end
-else
-Mon="FactoryStaff"
-NameQuest="Area2Quest"
-LevelQuest=2
-NameMon="FactoryStaff"
-CFrameQuest=CFrame.new(632.698608,73.1055908,918.666321,-0.0319722369,8.96074881E-10,-0.999488771,1.36326533E-10,1,8.92172336E-10,0.999488771,-1.07732087E-10,-0.0319722369)
-CFrameMon=CFrame.new(73.07867431640625,81.86344146728516,-27.470672607421875)
-end
-else
-Mon="Raider"
-LevelQuest=1
-NameQuest="Area1Quest"
-NameMon="Raider"
-CFrameQuest=CFrame.new(-429.543518,71.7699966,1836.18188,-0.22495985,-0,-0.974368095,-0,1,-0,0.974368095,-0,-0.22495985)
-CFrameMon=CFrame.new(-728.3267211914062,52.779319763183594,2345.7705078125)
-end
-end
+return {
+  ForgottenQuest = {
+    {
+      LevelReq = 1425,
+      Name = "Sea Soldier",
+      Task = {
+        ["Sea Soldier"] = 8
+      }
+    },
+    {
+      LevelReq = 1450,
+      Name = "Water Fighter",
+      Task = {
+        ["Water Fighter"] = 8
+      }
+    },
+    {
+      LevelReq = 1475,
+      Name = "Tide Keeper",
+      Task = {
+        ["Tide Keeper"] = 1
+      }
+    }
+  },
+  HauntedQuest2 = {
+    {
+      LevelReq = 2025,
+      Name = "Demonic Soul",
+      Task = {
+        ["Demonic Soul"] = 8
+      }
+    },
+    {
+      LevelReq = 2050,
+      Name = "Posessed Mummy",
+      Task = {
+        ["Posessed Mummy"] = 8
+      }
+    }
+  },
+  SkyQuest = {
+    {
+      LevelReq = 150,
+      Name = "Sky Bandit",
+      Task = {
+        ["Sky Bandit"] = 7
+      }
+    },
+    {
+      LevelReq = 175,
+      Name = "Dark Master",
+      Task = {
+        ["Dark Master"] = 8
+      }
+    }
+  },
+  ImpelQuest = {
+    {
+      LevelReq = 220,
+      Name = "Warden",
+      Task = {
+        Warden = 1
+      }
+    },
+    {
+      LevelReq = 230,
+      Name = "Chief Warden",
+      Task = {
+        ["Chief Warden"] = 1
+      }
+    },
+    {
+      LevelReq = 240,
+      Name = "Swan",
+      Task = {
+        Swan = 1
+      }
+    }
+  },
+  TikiQuest2 = {
+    {
+      LevelReq = 2500,
+      Name = "Sun-kissed Warrior",
+      Task = {
+        ["Sun-kissed Warrior"] = 8
+      }
+    },
+    {
+      LevelReq = 2525,
+      Name = "Isle Champion",
+      Task = {
+        ["Isle Champion"] = 8
+      }
+    }
+  },
+  Area1Quest = {
+    {
+      LevelReq = 700,
+      Name = "Raider",
+      Task = {
+        Raider = 8
+      }
+    },
+    {
+      LevelReq = 725,
+      Name = "Mercenary",
+      Task = {
+        Mercenary = 8
+      }
+    },
+    {
+      LevelReq = 750,
+      Name = "Diamond",
+      Task = {
+        Diamond = 1
+      }
+    }
+  },
+  DeepForestIsland3 = {
+    {
+      LevelReq = 1775,
+      Name = "Fishman Raider",
+      Task = {
+        ["Fishman Raider"] = 8
+      }
+    },
+    {
+      LevelReq = 1800,
+      Name = "Fishman Captain",
+      Task = {
+        ["Fishman Captain"] = 8
+      }
+    }
+  },
+  CandyQuest1 = {
+    {
+      LevelReq = 2400,
+      Name = "Candy Pirate",
+      Task = {
+        ["Candy Pirate"] = 8
+      }
+    },
+    {
+      LevelReq = 2425,
+      Name = "Snow Demon",
+      Task = {
+        ["Snow Demon"] = 8
+      }
+    }
+  },
+  FireSideQuest = {
+    {
+      LevelReq = 1175,
+      Name = "Magma Ninja",
+      Task = {
+        ["Magma Ninja"] = 8
+      }
+    },
+    {
+      LevelReq = 1200,
+      Name = "Lava Pirate",
+      Task = {
+        ["Lava Pirate"] = 8
+      }
+    }
+  },
+  JungleQuest = {
+    {
+      LevelReq = 10,
+      Name = "Monkeys",
+      Task = {
+        Monkey = 6
+      }
+    },
+    {
+      LevelReq = 15,
+      Name = "Gorillas",
+      Task = {
+        Gorilla = 8
+      }
+    },
+    {
+      LevelReq = 20,
+      Name = "Gorilla King",
+      Task = {
+        ["The Gorilla King"] = 1
+      }
+    }
+  },
+  FountainQuest = {
+    {
+      LevelReq = 625,
+      Name = "Galley Pirate",
+      Task = {
+        ["Galley Pirate"] = 8
+      }
+    },
+    {
+      LevelReq = 650,
+      Name = "Galley Captain",
+      Task = {
+        ["Galley Captain"] = 9
+      }
+    },
+    {
+      LevelReq = 675,
+      Name = "Cyborg",
+      Task = {
+        Cyborg = 1
+      }
+    }
+  },
+  DesertQuest = {
+    {
+      LevelReq = 60,
+      Name = "Desert Bandit",
+      Task = {
+        ["Desert Bandit"] = 8
+      }
+    },
+    {
+      LevelReq = 75,
+      Name = "Desert Officer",
+      Task = {
+        ["Desert Officer"] = 6
+      }
+    }
+  },
+  SnowQuest = {
+    {
+      LevelReq = 90,
+      Name = "Snow Bandit",
+      Task = {
+        ["Snow Bandit"] = 7
+      }
+    },
+    {
+      LevelReq = 100,
+      Name = "Snowman",
+      Task = {
+        Snowman = 8
+      }
+    },
+    {
+      LevelReq = 105,
+      Name = "Yeti",
+      Task = {
+        Yeti = 1
+      }
+    }
+  },
+  MarineTreeIsland = {
+    {
+      LevelReq = 1700,
+      Name = "Marine Commodore",
+      Task = {
+        ["Marine Commodore"] = 8
+      }
+    },
+    {
+      LevelReq = 1725,
+      Name = "Marine Rear Admiral",
+      Task = {
+        ["Marine Rear Admiral"] = 8
+      }
+    },
+    {
+      LevelReq = 1750,
+      Name = "Kilo Admiral",
+      Task = {
+        ["Kilo Admiral"] = 1
+      }
+    }
+  },
+  HauntedQuest1 = {
+    {
+      LevelReq = 1975,
+      Name = "Reborn Skeleton",
+      Task = {
+        ["Reborn Skeleton"] = 8
+      }
+    },
+    {
+      LevelReq = 2000,
+      Name = "Living Zombie",
+      Task = {
+        ["Living Zombie"] = 8
+      }
+    }
+  },
+  DeepForestIsland = {
+    {
+      LevelReq = 1825,
+      Name = "Forest Pirate",
+      Task = {
+        ["Forest Pirate"] = 8
+      }
+    },
+    {
+      LevelReq = 1850,
+      Name = "Mythological Pirate",
+      Task = {
+        ["Mythological Pirate"] = 8
+      }
+    },
+    {
+      LevelReq = 1875,
+      Name = "Captain Elephant",
+      Task = {
+        ["Captain Elephant"] = 1
+      }
+    }
+  },
+  BuggyQuest1 = {
+    {
+      LevelReq = 30,
+      Name = "Pirates",
+      Task = {
+        Pirate = 8
+      }
+    },
+    {
+      LevelReq = 40,
+      Name = "Brute",
+      Task = {
+        Brute = 8
+      }
+    },
+    {
+      LevelReq = 55,
+      Name = "Bobby",
+      Task = {
+        Bobby = 1
+      }
+    }
+  },
+  Area2Quest = {
+    {
+      LevelReq = 775,
+      Name = "Swan Pirate",
+      Task = {
+        ["Swan Pirate"] = 8
+      }
+    },
+    {
+      LevelReq = 800,
+      Name = "Factory Staff",
+      Task = {
+        ["Factory Staff"] = 8
+      }
+    },
+    {
+      LevelReq = 850,
+      Name = "Jeremy",
+      Task = {
+        Jeremy = 1
+      }
+    }
+  },
+  SkyExp1Quest = {
+    {
+      LevelReq = 450,
+      Name = "God's Guard",
+      Task = {
+        ["God's Guard"] = 7
+      }
+    },
+    {
+      LevelReq = 475,
+      Name = "Shanda",
+      Task = {
+        Shanda = 9
+      }
+    },
+    {
+      LevelReq = 500,
+      Name = "Wysper",
+      Task = {
+        Wysper = 1
+      }
+    }
+  },
+  ZombieQuest = {
+    {
+      LevelReq = 950,
+      Name = "Zombie",
+      Task = {
+        Zombie = 8
+      }
+    },
+    {
+      LevelReq = 975,
+      Name = "Vampire",
+      Task = {
+        Vampire = 8
+      }
+    }
+  },
+  CakeQuest2 = {
+    {
+      LevelReq = 2250,
+      Name = "Baking Staff",
+      Task = {
+        ["Baking Staff"] = 8
+      }
+    },
+    {
+      LevelReq = 2275,
+      Name = "Head Baker",
+      Task = {
+        ["Head Baker"] = 8
+      }
+    }
+  },
+  SnowMountainQuest = {
+    {
+      LevelReq = 1000,
+      Name = "Snow Trooper",
+      Task = {
+        ["Snow Trooper"] = 8
+      }
+    },
+    {
+      LevelReq = 1050,
+      Name = "Winter Warrior",
+      Task = {
+        ["Winter Warrior"] = 9
+      }
+    }
+  },
+  ShipQuest1 = {
+    {
+      LevelReq = 1250,
+      Name = "Ship Deckhand",
+      Task = {
+        ["Ship Deckhand"] = 8
+      }
+    },
+    {
+      LevelReq = 1275,
+      Name = "Ship Engineer",
+      Task = {
+        ["Ship Engineer"] = 8
+      }
+    }
+  },
+  DeepForestIsland2 = {
+    {
+      LevelReq = 1900,
+      Name = "Jungle Pirate",
+      Task = {
+        ["Jungle Pirate"] = 8
+      }
+    },
+    {
+      LevelReq = 1925,
+      Name = "Musketeer Pirate",
+      Task = {
+        ["Musketeer Pirate"] = 8
+      }
+    },
+    {
+      LevelReq = 1950,
+      Name = "Beautiful Pirate",
+      Task = {
+        ["Beautiful Pirate"] = 1
+      }
+    }
+  },
+  FrostQuest = {
+    {
+      LevelReq = 1350,
+      Name = "Arctic Warrior",
+      Task = {
+        ["Arctic Warrior"] = 8
+      }
+    },
+    {
+      LevelReq = 1375,
+      Name = "Snow Lurker",
+      Task = {
+        ["Snow Lurker"] = 8
+      }
+    },
+    {
+      LevelReq = 1400,
+      Name = "Ice Admiral",
+      Task = {
+        ["Awakened Ice Admiral"] = 1
+      }
+    }
+  },
+  PiratePortQuest = {
+    {
+      LevelReq = 1500,
+      Name = "Pirate Millionaire",
+      Task = {
+        ["Pirate Millionaire"] = 8
+      }
+    },
+    {
+      LevelReq = 1525,
+      Name = "Pistol Billionaire",
+      Task = {
+        ["Pistol Billionaire"] = 8
+      }
+    },
+    {
+      LevelReq = 1550,
+      Name = "Stone",
+      Task = {
+        Stone = 1
+      }
+    }
+  },
+  PrisonerQuest = {
+    {
+      LevelReq = 190,
+      Name = "Prisoner",
+      Task = {
+        Prisoner = 8
+      }
+    },
+    {
+      LevelReq = 210,
+      Name = "Dangerous Prisoner",
+      Task = {
+        ["Dangerous Prisoner"] = 8
+      }
+    }
+  },
+  MarineQuest3 = {
+    {
+      LevelReq = 875,
+      Name = "Marine Lieutenant",
+      Task = {
+        ["Marine Lieutenant"] = 8
+      }
+    },
+    {
+      LevelReq = 900,
+      Name = "Marine Captain",
+      Task = {
+        ["Marine Captain"] = 9
+      }
+    },
+    {
+      LevelReq = 925,
+      Name = "Fajita",
+      Task = {
+        Fajita = 1
+      }
+    }
+  },
+  BanditQuest1 = {
+    {
+      LevelReq = 0,
+      Name = "Bandits",
+      Task = {
+        Bandit = 5
+      }
+    }
+  },
+  DragonCrewQuest = {
+    {
+      LevelReq = 1575,
+      Name = "Dragon Crew Warrior",
+      Task = {
+        ["Dragon Crew Warrior"] = 8
+      }
+    },
+    {
+      LevelReq = 1600,
+      Name = "Dragon Crew Archer",
+      Task = {
+        ["Dragon Crew Archer"] = 8
+      }
+    }
+  },
+  MagmaQuest = {
+    {
+      LevelReq = 300,
+      Name = "Mil. Soldier",
+      Task = {
+        ["Military Soldier"] = 7
+      }
+    },
+    {
+      LevelReq = 325,
+      Name = "Mil. Spy",
+      Task = {
+        ["Military Spy"] = 8
+      }
+    },
+    {
+      LevelReq = 350,
+      Name = "Magma Admiral",
+      Task = {
+        ["Magma Admiral"] = 1
+      }
+    }
+  },
+  VenomCrewQuest = {
+    {
+      LevelReq = 1625,
+      Name = "Hydra Enforcer",
+      Task = {
+        ["Hydra Enforcer"] = 8
+      }
+    },
+    {
+      LevelReq = 1650,
+      Name = "Venomous Assailant",
+      Task = {
+        ["Venomous Assailant"] = 8
+      }
+    },
+    {
+      LevelReq = 1675,
+      Name = "Hydra Leader",
+      Task = {
+        ["Hydra Leader"] = 1
+      }
+    }
+  },
+  CakeQuest1 = {
+    {
+      LevelReq = 2200,
+      Name = "Cookie Crafter",
+      Task = {
+        ["Cookie Crafter"] = 8
+      }
+    },
+    {
+      LevelReq = 2225,
+      Name = "Cake Guard",
+      Task = {
+        ["Cake Guard"] = 8
+      }
+    }
+  },
+  TikiQuest3 = {
+    {
+      LevelReq = 2550,
+      Name = "Serpent Hunter",
+      Task = {
+        ["Serpent Hunter"] = 8
+      }
+    },
+    {
+      LevelReq = 2575,
+      Name = "Skull Slayer",
+      Task = {
+        ["Skull Slayer"] = 8
+      }
+    }
+  },
+  TikiQuest1 = {
+    {
+      LevelReq = 2450,
+      Name = "Isle Outlaw",
+      Task = {
+        ["Isle Outlaw"] = 8
+      }
+    },
+    {
+      LevelReq = 2475,
+      Name = "Island Boy",
+      Task = {
+        ["Island Boy"] = 8
+      }
+    }
+  },
+  SkyExp2Quest = {
+    {
+      LevelReq = 525,
+      Name = "Royal Squad",
+      Task = {
+        ["Royal Squad"] = 8
+      }
+    },
+    {
+      LevelReq = 550,
+      Name = "Royal Soldier",
+      Task = {
+        ["Royal Soldier"] = 8
+      }
+    },
+    {
+      LevelReq = 575,
+      Name = "Thunder God",
+      Task = {
+        ["Thunder God"] = 1
+      }
+    }
+  },
+  MarineQuest2 = {
+    {
+      LevelReq = 120,
+      Name = "Chief Petty Officer",
+      Task = {
+        ["Chief Petty Officer"] = 8
+      }
+    },
+    {
+      LevelReq = 130,
+      Name = "Vice Admiral",
+      Task = {
+        ["Vice Admiral"] = 1
+      }
+    }
+  },
+  IceSideQuest = {
+    {
+      LevelReq = 1100,
+      Name = "Lab Subordinate",
+      Task = {
+        ["Lab Subordinate"] = 8
+      }
+    },
+    {
+      LevelReq = 1125,
+      Name = "Horned Warrior",
+      Task = {
+        ["Horned Warrior"] = 9
+      }
+    },
+    {
+      LevelReq = 1150,
+      Name = "Smoke Admiral",
+      Task = {
+        ["Smoke Admiral"] = 1
+      }
+    }
+  },
+  ColosseumQuest = {
+    {
+      LevelReq = 250,
+      Name = "Toga Warrior",
+      Task = {
+        ["Toga Warrior"] = 7
+      }
+    },
+    {
+      LevelReq = 275,
+      Name = "Gladiator",
+      Task = {
+        Gladiator = 8
+      }
+    }
+  },
+  ShipQuest2 = {
+    {
+      LevelReq = 1300,
+      Name = "Ship Steward",
+      Task = {
+        ["Ship Steward"] = 8
+      }
+    },
+    {
+      LevelReq = 1325,
+      Name = "Ship Officer",
+      Task = {
+        ["Ship Officer"] = 8
+      }
+    }
+  },
+  NutsIslandQuest = {
+    {
+      LevelReq = 2075,
+      Name = "Peanut Scout",
+      Task = {
+        ["Peanut Scout"] = 8
+      }
+    },
+    {
+      LevelReq = 2100,
+      Name = "Peanut President",
+      Task = {
+        ["Peanut President"] = 8
+      }
+    }
+  },
+  IceCreamIslandQuest = {
+    {
+      LevelReq = 2125,
+      Name = "Ice Cream Chef",
+      Task = {
+        ["Ice Cream Chef"] = 8
+      }
+    },
+    {
+      LevelReq = 2150,
+      Name = "Ice Cream Commander",
+      Task = {
+        ["Ice Cream Commander"] = 8
+      }
+    },
+    {
+      LevelReq = 2175,
+      Name = "Cake Queen",
+      Task = {
+        ["Cake Queen"] = 1
+      }
+    }
+  },
+  FishmanQuest = {
+    {
+      LevelReq = 375,
+      Name = "Fishman Warrior",
+      Task = {
+        ["Fishman Warrior"] = 8
+      }
+    },
+    {
+      LevelReq = 400,
+      Name = "Fishman Commando",
+      Task = {
+        ["Fishman Commando"] = 7
+      }
+    },
+    {
+      LevelReq = 425,
+      Name = "Fishman Lord",
+      Task = {
+        ["Fishman Lord"] = 1
+      }
+    }
+  },
+  ChocQuest1 = {
+    {
+      LevelReq = 2300,
+      Name = "Cocoa Warrior",
+      Task = {
+        ["Cocoa Warrior"] = 8
+      }
+    },
+    {
+      LevelReq = 2325,
+      Name = "Chocolate Bar Battler",
+      Task = {
+        ["Chocolate Bar Battler"] = 8
+      }
+    }
+  },
+  ChocQuest2 = {
+    {
+      LevelReq = 2350,
+      Name = "Sweet Thief",
+      Task = {
+        ["Sweet Thief"] = 8
+      }
+    },
+    {
+      LevelReq = 2375,
+      Name = "Candy Rebel",
+      Task = {
+        ["Candy Rebel"] = 8
+      }
+    }
+  }
+}
