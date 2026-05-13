@@ -1733,7 +1733,7 @@ function FastAttack:HandleNormal(Equipped)
 		RE_ShootGunEvent:FireServer(Position, CurrentBladeHits)
 	end
 end
-
+ 
 function FastAttack:HandlePositionOrTap(Equipped)
 	local Target = self:GetClosestEnemy(100)
 	if not IsValidTarget(Target) then return end
