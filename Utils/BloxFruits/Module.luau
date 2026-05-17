@@ -1643,6 +1643,30 @@ end
 				end
 			end
 		end
+
+		function FastAttack:SuperFastAttack(EnemyHitBox, BladeHits, Cooldown)
+			if Module.SuperFastAttack and Settings.FastAttack then
+				local Enemy = EnemyHitBox.Parent
+				local Times = if Enemy:GetAttribute("IsBoss") then 25 elseif Enemy:GetAttribute("RaidBoss") then 40 else 6
+				
+				self.Debounce = tick() + 9e9;
+				local Overheat = 0;
+				
+				table.insert(BladeHits, { EnemyHitBox.Parent, EnemyHitBox })
+				table.insert(BladeHits, math.random())
+				
+				while Overheat <= 0.4 do
+					for i = 1, Times do
+						RE_RegisterAttack:FireServer(self:GetCombo())
+						HIT_FUNCTION(EnemyHitBox, BladeHits)
+					end
+					Overheat += task.wait(if Times > 10 then 0.07 else 0)
+				end
+				
+				self.Debounce = 0;
+				return true;
+			end
+		end
 		
 		function FastAttack:UseNormalClick(Cooldown: number): (nil)
 			self:UpdateBladeHits()
@@ -1651,8 +1675,10 @@ end
 				local PrimaryRootPart = table.remove(CurrentBladeHits)[2]
 				
 				if SUCCESS_FLAGS and COMBAT_REMOTE_THREAD and HIT_FUNCTION then
-					RE_RegisterAttack:FireServer(Cooldown)
-					HIT_FUNCTION(PrimaryRootPart, CurrentBladeHits)
+					if not self:SuperFastAttack(PrimaryRootPart, CurrentBladeHits, Cooldown) then
+						RE_RegisterAttack:FireServer(Cooldown)
+						HIT_FUNCTION(PrimaryRootPart, CurrentBladeHits)
+					end
 				elseif SUCCESS_FLAGS and not COMBAT_REMOTE_THREAD then
 					RE_RegisterAttack:FireServer(Cooldown)
 					RE_RegisterHit:FireServer(PrimaryRootPart, CurrentBladeHits)
