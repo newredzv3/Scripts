@@ -12,6 +12,15 @@ local ReplicatedStorage: ReplicatedStorage = game:GetService("ReplicatedStorage"
 local TeleportService: TeleportService = game:GetService("TeleportService")
 local RunService: RunService = game:GetService("RunService")
 local Players: Players = game:GetService("Players")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local lp = Players.LocalPlayer
+
+local Net = require(ReplicatedStorage.Modules.Net)
+local CombatUtil = require(ReplicatedStorage.Modules.CombatUtil)
+
+local hitRemote = Net:RemoteEvent("RegisterHit")
+local attackRemote = ReplicatedStorage.Modules.Net:FindFirstChild("RE/RegisterAttack")
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local GunValidator: RemoteEvent = Remotes:WaitForChild("Validator2")
@@ -2148,6 +2157,117 @@ function EnableBuso()
 		end
 	end
 end
+
+local function getChar()
+	return lp.Character
+end
+
+local function getMobs(range)
+	local char = getChar()
+	if not char or not char:FindFirstChild("HumanoidRootPart") then return {} end
+
+	local root = char.HumanoidRootPart
+	local mobs = {}
+
+	for _, mob in ipairs(workspace.Enemies:GetChildren()) do
+		local hrp = mob:FindFirstChild("HumanoidRootPart")
+		local hum = mob:FindFirstChild("Humanoid")
+
+		if hrp and hum and hum.Health > 0 then
+			if (hrp.Position - root.Position).Magnitude <= (range or 60) then
+				table.insert(mobs, mob)
+			end
+		end
+	end
+
+	for _, plr in ipairs(workspace.Characters:GetChildren()) do
+		local hrp = plr:FindFirstChild("HumanoidRootPart")
+		local hum = plr:FindFirstChild("Humanoid")
+
+		if plr ~= getChar() and hrp and hum and hum.Health > 0 then
+			if (hrp.Position - root.Position).Magnitude <= (range or 60) then
+				table.insert(mobs, plr)
+			end
+		end
+	end
+
+	return mobs
+end
+
+local function superFastAttack(enemyHitBox, bladeHits)
+	local enemy = enemyHitBox.Parent
+	if not enemy then return end
+	if not Settings.SuperClique then return end
+
+	local times = enemy:GetAttribute("IsBoss") and 25
+		or enemy:GetAttribute("RaidBoss") and 40
+		or 6
+
+	local overheat = 0
+
+	table.insert(bladeHits, {enemy, enemyHitBox})
+	table.insert(bladeHits, math.random())
+
+	while overheat <= 0.4 and Settings.SuperClique do
+		for i = 1, times do
+			if not Settings.SuperClique then return end
+
+			if attackRemote then
+				attackRemote:FireServer()
+			end
+
+			hitRemote:FireServer(enemyHitBox, bladeHits, nil, nil)
+		end
+
+		overheat += task.wait(times > 10 and 0.07 or 0)
+	end
+end
+
+local function attackTarget(target)
+	local char = getChar()
+	if not char then return end
+
+	local hrp = target:FindFirstChild("HumanoidRootPart")
+	local hum = target:FindFirstChild("Humanoid")
+
+	if not hrp or not hum or hum.Health <= 0 then return end
+
+	local tool = char:FindFirstChildOfClass("Tool")
+	if not tool then return end
+
+	pcall(function()
+		local weaponName = CombatUtil:GetWeaponName(tool)
+		local uuid = tostring(lp.UserId):sub(2,4)..tostring(math.random(10000,99999))
+		local hitData = {{target, hrp}}
+
+		if attackRemote then
+			attackRemote:FireServer()
+		end
+
+		hitRemote:FireServer(hrp, hitData, nil, nil, uuid)
+		CombatUtil:ApplyDamageHighlight(target, char, weaponName, hrp, nil)
+	end)
+end
+
+task.spawn(function()
+	while task.wait() do
+		if Settings.SuperClique then
+			local mobs = getMobs(60)
+
+			for _, mob in ipairs(mobs) do
+				if not Settings.SuperClique then break end
+
+				local hrp = mob:FindFirstChild("HumanoidRootPart")
+
+				if hrp then
+					superFastAttack(hrp, {})
+				else
+					attackTarget(mob)
+				end
+			end
+		end
+	end
+end)
 
 function GetToolByName(Name)
 	local Cached = Module.Cached.Tools[Name]
