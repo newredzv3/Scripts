@@ -14,12 +14,6 @@ local Settings = {
 	NoClip = true
 }
 
-local BodyVelocity = Instance.new("BodyVelocity")
-BodyVelocity.Name = "TweenVelocity"
-BodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-BodyVelocity.P = 100000
-BodyVelocity.Velocity = Vector3.zero
-
 local CharacterConnections = {}
 local NoClipParts = {}
 
@@ -63,21 +57,10 @@ end
 
 Player.CharacterAdded:Connect(SetupCharacter)
 
-RunService.Heartbeat:Connect(function()
+RunService.Stepped:Connect(function()
 	local Character = Player.Character
 
 	if not Character then
-		return
-	end
-
-	local Humanoid = Character:FindFirstChildOfClass("Humanoid")
-	local RootPart = Character:FindFirstChild("HumanoidRootPart")
-
-	if not Humanoid or Humanoid.Health <= 0 or not RootPart then
-		if BodyVelocity.Parent then
-			BodyVelocity.Parent = nil
-		end
-
 		return
 	end
 
@@ -90,19 +73,22 @@ RunService.Heartbeat:Connect(function()
 			end
 		end
 	end
-
-	pcall(function()
-		if BodyVelocity.Parent ~= RootPart then
-			BodyVelocity.Parent = RootPart
-		end
-	end)
-
-	if TweenModule:IsTweening(RootPart) then
-		BodyVelocity.Velocity = Vector3.new(0, workspace.Gravity, 0)
-	else
-		BodyVelocity.Velocity = Vector3.zero
-	end
 end)
+
+function TweenModule:GetHover(RootPart)
+	local BV = RootPart:FindFirstChild("KAHover")
+
+	if not BV then
+		BV = Instance.new("BodyVelocity")
+		BV.Name = "KAHover"
+		BV.MaxForce = Vector3.new(1e9, 1e9, 1e9)
+		BV.P = 1e9
+		BV.Velocity = Vector3.zero
+		BV.Parent = RootPart
+	end
+
+	return BV
+end
 
 function TweenModule:StopTween(Object)
 	local Tween = ActiveTweens[Object]
@@ -117,15 +103,26 @@ end
 function TweenModule:Stop()
 	local Character = Player.Character
 
-	if Character then
-		local RootPart = Character:FindFirstChild("HumanoidRootPart")
+	if not Character then
+		return
+	end
 
-		if RootPart then
-			self:StopTween(RootPart)
+	local Humanoid = Character:FindFirstChildOfClass("Humanoid")
+	local RootPart = Character:FindFirstChild("HumanoidRootPart")
+
+	if RootPart then
+		self:StopTween(RootPart)
+
+		local Hover = RootPart:FindFirstChild("KAHover")
+
+		if Hover then
+			Hover:Destroy()
 		end
 	end
 
-	BodyVelocity.Velocity = Vector3.zero
+	if Humanoid then
+		Humanoid.PlatformStand = false
+	end
 end
 
 function TweenModule:Create(Object, Time, Property, Value)
@@ -144,7 +141,25 @@ function TweenModule:Create(Object, Time, Property, Value)
 	Tween.Completed:Connect(function()
 		if ActiveTweens[Object] == Tween then
 			ActiveTweens[Object] = nil
-			BodyVelocity.Velocity = Vector3.zero
+
+			local Character = Player.Character
+
+			if Character then
+				local Humanoid = Character:FindFirstChildOfClass("Humanoid")
+				local RootPart = Character:FindFirstChild("HumanoidRootPart")
+
+				if RootPart then
+					local Hover = RootPart:FindFirstChild("KAHover")
+
+					if Hover then
+						Hover:Destroy()
+					end
+				end
+
+				if Humanoid then
+					Humanoid.PlatformStand = false
+				end
+			end
 		end
 	end)
 
@@ -174,10 +189,16 @@ function TweenModule:Teleport(TargetCFrame)
 
 	self:StopTween(RootPart)
 
+	Humanoid.PlatformStand = true
+
+	local Hover = self:GetHover(RootPart)
+	Hover.Velocity = Vector3.zero
+
 	local Distance = (RootPart.Position - TargetCFrame.Position).Magnitude
 
 	if Distance <= Settings.TweenSpeed then
 		RootPart.CFrame = TargetCFrame
+		Humanoid.PlatformStand = false
 		return true
 	end
 
