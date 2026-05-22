@@ -108,6 +108,20 @@ function TweenModule:StopTween(Object)
 	end
 end
 
+function TweenModule:Stop()
+	local Character = Player.Character
+
+	if not Character then
+		return
+	end
+
+	local RootPart = Character:FindFirstChild("HumanoidRootPart")
+
+	if RootPart then
+		self:StopTween(RootPart)
+	end
+end
+
 function TweenModule:Create(Object, Time, Property, Value)
 	self:StopTween(Object)
 
@@ -151,11 +165,12 @@ function TweenModule:Teleport(TargetCFrame)
 		return false
 	end
 
+	self:StopTween(RootPart)
+
 	local Distance = (RootPart.Position - TargetCFrame.Position).Magnitude
 
 	if Distance <= Settings.TweenSpeed then
 		RootPart.CFrame = TargetCFrame
-		self:StopTween(RootPart)
 		return true
 	end
 
