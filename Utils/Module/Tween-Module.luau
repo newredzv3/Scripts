@@ -17,7 +17,7 @@ local Settings = {
 local BodyVelocity = Instance.new("BodyVelocity")
 BodyVelocity.Name = "TweenVelocity"
 BodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-BodyVelocity.P = 1000
+BodyVelocity.P = 50000
 BodyVelocity.Velocity = Vector3.zero
 
 local CharacterConnections = {}
@@ -91,10 +91,16 @@ RunService.Stepped:Connect(function()
 		end
 	end
 
-	if BodyVelocity.Parent ~= RootPart then
-		pcall(function()
+	pcall(function()
+		if BodyVelocity.Parent ~= RootPart then
 			BodyVelocity.Parent = RootPart
-		end)
+		end
+	end)
+
+	if TweenModule:IsTweening(RootPart) then
+		BodyVelocity.Velocity = Vector3.new(0, 25, 0)
+	else
+		BodyVelocity.Velocity = Vector3.zero
 	end
 end)
 
@@ -111,15 +117,15 @@ end
 function TweenModule:Stop()
 	local Character = Player.Character
 
-	if not Character then
-		return
+	if Character then
+		local RootPart = Character:FindFirstChild("HumanoidRootPart")
+
+		if RootPart then
+			self:StopTween(RootPart)
+		end
 	end
 
-	local RootPart = Character:FindFirstChild("HumanoidRootPart")
-
-	if RootPart then
-		self:StopTween(RootPart)
-	end
+	BodyVelocity.Velocity = Vector3.zero
 end
 
 function TweenModule:Create(Object, Time, Property, Value)
@@ -138,6 +144,7 @@ function TweenModule:Create(Object, Time, Property, Value)
 	Tween.Completed:Connect(function()
 		if ActiveTweens[Object] == Tween then
 			ActiveTweens[Object] = nil
+			BodyVelocity.Velocity = Vector3.zero
 		end
 	end)
 
@@ -165,14 +172,17 @@ function TweenModule:Teleport(TargetCFrame)
 		return false
 	end
 
-	self:StopTween(RootPart)
-
 	local Distance = (RootPart.Position - TargetCFrame.Position).Magnitude
 
 	if Distance <= Settings.TweenSpeed then
 		RootPart.CFrame = TargetCFrame
+		self:StopTween(RootPart)
 		return true
 	end
+
+	local Direction = (TargetCFrame.Position - RootPart.Position).Unit
+
+	BodyVelocity.Velocity = Direction * Settings.TweenSpeed
 
 	local Time = Distance / Settings.TweenSpeed
 
