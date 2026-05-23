@@ -1,4 +1,3 @@
-local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
@@ -7,55 +6,32 @@ local Player = Players.LocalPlayer
 local TweenModule = {}
 TweenModule.__index = TweenModule
 
-local ActiveTweens = {}
+local ActiveTween = false
 
 local Settings = {
 	TweenSpeed = 300,
 	NoClip = true
 }
 
-local CharacterConnections = {}
-local NoClipParts = {}
-
-local function DisconnectConnections()
-	for _, v in pairs(CharacterConnections) do
-		v:Disconnect()
+local function GetCharacter()
+	if not Player.Character then
+		Player.CharacterAdded:Wait()
 	end
 
-	table.clear(CharacterConnections)
+	Player.Character:WaitForChild("HumanoidRootPart")
+
+	return Player.Character
 end
 
-local function AddNoClipPart(obj)
-	if obj:IsA("BasePart") and obj.CanCollide then
-		table.insert(NoClipParts, obj)
+local function ToggleNoClip(State)
+	local Character = GetCharacter()
+
+	for _, v in pairs(Character:GetDescendants()) do
+		if v:IsA("BasePart") then
+			v.CanCollide = not State
+		end
 	end
 end
-
-local function RemoveNoClipPart(obj)
-	local index = table.find(NoClipParts, obj)
-
-	if index then
-		table.remove(NoClipParts, index)
-	end
-end
-
-local function SetupCharacter(Character)
-	table.clear(NoClipParts)
-	DisconnectConnections()
-
-	for _, obj in pairs(Character:GetDescendants()) do
-		AddNoClipPart(obj)
-	end
-
-	table.insert(CharacterConnections, Character.DescendantAdded:Connect(AddNoClipPart))
-	table.insert(CharacterConnections, Character.DescendantRemoving:Connect(RemoveNoClipPart))
-end
-
-if Player.Character then
-	SetupCharacter(Player.Character)
-end
-
-Player.CharacterAdded:Connect(SetupCharacter)
 
 function TweenModule:GetHover(RootPart)
 	local BV = RootPart:FindFirstChild("KAHover")
@@ -72,7 +48,45 @@ function TweenModule:GetHover(RootPart)
 	return BV
 end
 
+function TweenModule:SetSpeed(Speed)
+	Settings.TweenSpeed = Speed
+end
+
+function TweenModule:GetSpeed()
+	return Settings.TweenSpeed
+end
+
+function TweenModule:IsTweening()
+	return ActiveTween
+end
+
+function TweenModule:Stop()
+	ActiveTween = false
+
+	local Character = Player.Character
+
+	if Character then
+		local RootPart = Character:FindFirstChild("HumanoidRootPart")
+
+		if RootPart then
+			local Hover = RootPart:FindFirstChild("KAHover")
+
+			if Hover then
+				Hover:Destroy()
+			end
+
+			RootPart.AssemblyLinearVelocity = Vector3.zero
+		end
+	end
+
+	ToggleNoClip(false)
+end
+
 RunService.Stepped:Connect(function()
+	if not ActiveTween then
+		return
+	end
+
 	local Character = Player.Character
 
 	if not Character then
@@ -86,107 +100,30 @@ RunService.Stepped:Connect(function()
 		return
 	end
 
+	Humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
+
+	local Hover = TweenModule:GetHover(RootPart)
+
+	Hover.Velocity = Vector3.zero
+
 	if Settings.NoClip then
-		for _, part in pairs(Character:GetDescendants()) do
-			if part:IsA("BasePart") then
-				part.CanCollide = false
+		for _, v in pairs(Character:GetDescendants()) do
+			if v:IsA("BasePart") then
+				v.CanCollide = false
 			end
-		end
-	end
-
-	if TweenModule:IsTweening(RootPart) then
-		Humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
-
-		local Hover = TweenModule:GetHover(RootPart)
-		Hover.Velocity = Vector3.zero
-	else
-		local Hover = RootPart:FindFirstChild("KAHover")
-
-		if Hover then
-			Hover:Destroy()
 		end
 	end
 end)
 
-function TweenModule:StopTween(Object)
-	local Tween = ActiveTweens[Object]
-
-	if Tween then
-		Tween:Pause()
-		Tween:Destroy()
-		ActiveTweens[Object] = nil
-	end
-end
-
-function TweenModule:Stop()
-	local Character = Player.Character
-
-	if not Character then
-		return
-	end
-
-	local RootPart = Character:FindFirstChild("HumanoidRootPart")
-
-	if RootPart then
-		self:StopTween(RootPart)
-
-		local Hover = RootPart:FindFirstChild("KAHover")
-
-		if Hover then
-			Hover:Destroy()
-		end
-	end
-end
-
-function TweenModule:Create(Object, Time, Property, Value)
-	self:StopTween(Object)
-
-	local Tween = TweenService:Create(
-		Object,
-		TweenInfo.new(Time, Enum.EasingStyle.Linear),
-		{
-			[Property] = Value
-		}
-	)
-
-	ActiveTweens[Object] = Tween
-
-	Tween.Completed:Connect(function()
-		if ActiveTweens[Object] == Tween then
-			ActiveTweens[Object] = nil
-
-			local Character = Player.Character
-
-			if Character then
-				local RootPart = Character:FindFirstChild("HumanoidRootPart")
-
-				if RootPart then
-					local Hover = RootPart:FindFirstChild("KAHover")
-
-					if Hover then
-						Hover:Destroy()
-					end
-				end
-			end
-		end
-	end)
-
-	Tween:Play()
-
-	return Tween
-end
-
 function TweenModule:Teleport(TargetCFrame)
-	local Character = Player.Character
+	self:Stop()
 
-	if not Character then
-		return false
-	end
+	local Character = GetCharacter()
 
 	local Humanoid = Character:FindFirstChildOfClass("Humanoid")
 	local RootPart = Character:FindFirstChild("HumanoidRootPart")
 
-	if not Humanoid or Humanoid.Health <= 0 or not RootPart then
+	if not Humanoid or Humanoid.Health <= 0 then
 		return false
 	end
 
@@ -195,40 +132,47 @@ function TweenModule:Teleport(TargetCFrame)
 		return false
 	end
 
-	self:StopTween(RootPart)
+	ActiveTween = true
 
-	local Hover = self:GetHover(RootPart)
-	Hover.Velocity = Vector3.zero
+	task.spawn(function()
+		if Settings.NoClip then
+			ToggleNoClip(true)
+		end
 
-	local Distance = (RootPart.Position - TargetCFrame.Position).Magnitude
+		local Magnitude = (RootPart.Position - TargetCFrame.Position).Magnitude
+		local TargetY = TargetCFrame.Position.Y + 3
 
-	if Distance <= Settings.TweenSpeed then
-		RootPart.CFrame = TargetCFrame
-		return true
-	end
+		while ActiveTween and Magnitude > 5 do
+			local CurrentPos = RootPart.Position
 
-	local Time = Distance / Settings.TweenSpeed
+			local Direction = (
+				Vector3.new(
+					TargetCFrame.Position.X,
+					TargetY,
+					TargetCFrame.Position.Z
+				) - CurrentPos
+			).Unit
 
-	self:Create(
-		RootPart,
-		Time,
-		"CFrame",
-		TargetCFrame
-	)
+			local MoveStep = Direction * (Settings.TweenSpeed * task.wait())
+
+			RootPart.AssemblyLinearVelocity = Vector3.zero
+
+			RootPart.CFrame = CFrame.new(
+				CurrentPos + MoveStep,
+				TargetCFrame.Position
+			)
+
+			Magnitude = (RootPart.Position - TargetCFrame.Position).Magnitude
+		end
+
+		if ActiveTween then
+			RootPart.CFrame = TargetCFrame
+		end
+
+		self:Stop()
+	end)
 
 	return true
-end
-
-function TweenModule:IsTweening(Object)
-	return ActiveTweens[Object] ~= nil
-end
-
-function TweenModule:SetSpeed(Speed)
-	Settings.TweenSpeed = Speed
-end
-
-function TweenModule:GetSpeed()
-	return Settings.TweenSpeed
 end
 
 return TweenModule
