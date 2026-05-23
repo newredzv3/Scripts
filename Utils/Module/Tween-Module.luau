@@ -14,15 +14,7 @@ local Settings = {
 	NoClip = true
 }
 
-pcall(function()
-	PhysicsService:CreateCollisionGroup("TweenNoClip")
-end)
-
-PhysicsService:CollisionGroupSetCollidable(
-	"TweenNoClip",
-	"Default",
-	false
-)
+local COLLISION_GROUP = "Players"
 
 local function GetCharacter()
 	if not Player.Character then
@@ -40,15 +32,13 @@ local function ToggleNoClip(State)
 	for _, v in pairs(Character:GetDescendants()) do
 		if v:IsA("BasePart") then
 			if State then
-				PhysicsService:SetPartCollisionGroup(
-					v,
-					"TweenNoClip"
-				)
+				pcall(function()
+					PhysicsService:SetPartCollisionGroup(v, COLLISION_GROUP)
+				end)
 			else
-				PhysicsService:SetPartCollisionGroup(
-					v,
-					"Default"
-				)
+				pcall(function()
+					PhysicsService:SetPartCollisionGroup(v, "Default")
+				end)
 			end
 		end
 	end
@@ -156,26 +146,19 @@ function TweenModule:Teleport(TargetCFrame)
 			ToggleNoClip(true)
 		end
 
-		local Magnitude = (
-			RootPart.Position - TargetCFrame.Position
-		).Magnitude
-
+		local Magnitude = (RootPart.Position - TargetCFrame.Position).Magnitude
 		local TargetY = TargetCFrame.Position.Y + 3
 
 		while ActiveTween and Magnitude > 5 do
 			local CurrentPos = RootPart.Position
 
-			local Direction = (
-				Vector3.new(
-					TargetCFrame.Position.X,
-					TargetY,
-					TargetCFrame.Position.Z
-				) - CurrentPos
-			).Unit
+			local Direction = (Vector3.new(
+				TargetCFrame.Position.X,
+				TargetY,
+				TargetCFrame.Position.Z
+			) - CurrentPos).Unit
 
-			local MoveStep = Direction * (
-				Settings.TweenSpeed * task.wait()
-			)
+			local MoveStep = Direction * Settings.TweenSpeed * task.wait()
 
 			RootPart.AssemblyLinearVelocity = Vector3.zero
 
@@ -184,9 +167,7 @@ function TweenModule:Teleport(TargetCFrame)
 				TargetCFrame.Position
 			)
 
-			Magnitude = (
-				RootPart.Position - TargetCFrame.Position
-			).Magnitude
+			Magnitude = (RootPart.Position - TargetCFrame.Position).Magnitude
 		end
 
 		if ActiveTween then
