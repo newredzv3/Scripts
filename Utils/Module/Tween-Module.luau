@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
+local PhysicsService = game:GetService("PhysicsService")
 
 local Player = Players.LocalPlayer
 
@@ -12,6 +13,16 @@ local Settings = {
 	TweenSpeed = 300,
 	NoClip = true
 }
+
+pcall(function()
+	PhysicsService:CreateCollisionGroup("TweenNoClip")
+end)
+
+PhysicsService:CollisionGroupSetCollidable(
+	"TweenNoClip",
+	"Default",
+	false
+)
 
 local function GetCharacter()
 	if not Player.Character then
@@ -28,7 +39,17 @@ local function ToggleNoClip(State)
 
 	for _, v in pairs(Character:GetDescendants()) do
 		if v:IsA("BasePart") then
-			v.CanCollide = not State
+			if State then
+				PhysicsService:SetPartCollisionGroup(
+					v,
+					"TweenNoClip"
+				)
+			else
+				PhysicsService:SetPartCollisionGroup(
+					v,
+					"Default"
+				)
+			end
 		end
 	end
 end
@@ -107,11 +128,7 @@ RunService.Stepped:Connect(function()
 	Hover.Velocity = Vector3.zero
 
 	if Settings.NoClip then
-		for _, v in pairs(Character:GetDescendants()) do
-			if v:IsA("BasePart") then
-				v.CanCollide = false
-			end
-		end
+		ToggleNoClip(true)
 	end
 end)
 
@@ -139,7 +156,10 @@ function TweenModule:Teleport(TargetCFrame)
 			ToggleNoClip(true)
 		end
 
-		local Magnitude = (RootPart.Position - TargetCFrame.Position).Magnitude
+		local Magnitude = (
+			RootPart.Position - TargetCFrame.Position
+		).Magnitude
+
 		local TargetY = TargetCFrame.Position.Y + 3
 
 		while ActiveTween and Magnitude > 5 do
@@ -153,7 +173,9 @@ function TweenModule:Teleport(TargetCFrame)
 				) - CurrentPos
 			).Unit
 
-			local MoveStep = Direction * (Settings.TweenSpeed * task.wait())
+			local MoveStep = Direction * (
+				Settings.TweenSpeed * task.wait()
+			)
 
 			RootPart.AssemblyLinearVelocity = Vector3.zero
 
@@ -162,7 +184,9 @@ function TweenModule:Teleport(TargetCFrame)
 				TargetCFrame.Position
 			)
 
-			Magnitude = (RootPart.Position - TargetCFrame.Position).Magnitude
+			Magnitude = (
+				RootPart.Position - TargetCFrame.Position
+			).Magnitude
 		end
 
 		if ActiveTween then
