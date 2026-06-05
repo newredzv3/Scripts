@@ -135,7 +135,6 @@ end
 
 
 
-
 	
 --[[local _ENV = (getgenv or getrenv or getfenv)()
 local BETA_VERSION = BETA_VERSION or _ENV.BETA_VERSION
