@@ -225,19 +225,12 @@ local Signal = {} do
 	})
 end
 
-local sea1 = {2753915549, 85211729168715}
-local sea2 = {4442272183, 79091703265657}
-local sea3 = {7449423635, 100117331123089}
-
-local function detectSea(placeId)
-    if table.find(sea1, placeId) then
-        return 1
-    elseif table.find(sea2, placeId) then
-        return 2
-    elseif table.find(sea3, placeId) then
-        return 3
-    end
-    return 0
+if table.find({2753915549, 85211729168715, 113741252407134, 114279672983750}, game.PlaceId) then
+    SeaId = 1
+elseif table.find({4442272183, 79091703265657}, game.PlaceId) then
+    SeaId = 2
+elseif table.find({7449423635, 100117331123089}, game.PlaceId) then
+    SeaId = 3
 end
 
 local Module = {} do
@@ -252,7 +245,7 @@ local Module = {} do
 	}
 	
 	Module.GameData = {
-		Sea =  detectSea(game.PlaceId),
+		Sea =  SeaId,
 		SeasName = { "Main", "Dressrosa", "Zou" },
 		MaxMastery = 600,
 		MaxLevel = game.Workspace:GetAttribute("LEVEL_CAP"),
@@ -1369,7 +1362,7 @@ Module.Enemies = (function()
 
    Module.FastAttack = (function()
 		local FastAttack = {
-			Distance = 55,
+			Distance = 90,
 			attackMobs = true,
 			attackPlayers = true,
 			Equipped = nil,
@@ -1437,7 +1430,7 @@ Module.Enemies = (function()
 		local MyRootPartPosition = nil;
 		local NoAttackBelowTool = nil;
 		local NoAttackBelowDebounce = 0;
-		local BelowHealthPercent = 0;
+		local BelowHealthPercent = 0;        
 		
 		local function ExpandsHitBox(Enemies: { table }): (nil)
 			for i = 1, #Enemies do
@@ -1645,7 +1638,8 @@ Module.Enemies = (function()
 		end
 		
 		function FastAttack:UseNormalClick(Cooldown: number): (nil)
-			self:UpdateBladeHits()
+		    MyRootPartPosition = Player.Character.Humanoid.RootPart.Position;
+			self:UpdateBladeHits()			
 			
 			if #CurrentBladeHits > 0 then
 				local PrimaryRootPart = table.remove(CurrentBladeHits)[2]
@@ -1760,6 +1754,7 @@ end
 
 function FastAttack:UseGunShoot(Character, Equipped)
 	if not Equipped.Enabled then return end	
+	MyRootPartPosition = Player.Character.Humanoid.RootPart.Position;
 	local ShootType = self.SpecialShoots[Equipped.Name] or "Normal"
 	if ShootType == "Overheat" then
 		local Data = self.Overheat[Equipped.Name]
@@ -1794,7 +1789,6 @@ end
 				
 				self.Equipped = Equipped;
 				self.Debounce = if Combo >= 4 and ToolTip ~= "Gun" then tick() + (Cooldown / 2) else tick();
-				MyRootPartPosition = Character.Humanoid.RootPart.Position;
 				
 				if ToolTip == "Blox Fruit" and not self.NormalClickFruits[Equipped.Name] and not self.FruitClick[Equipped.Name] then
 					if Equipped:FindFirstChild("LeftClickRemote") then
@@ -1808,8 +1802,8 @@ end
 					if SUCCESS_SHOOT and SHOOT_FUNCTION then
 						self:UseGunShoot(Character, Equipped)
 					end
-				else
-					self:UseNormalClick(Cooldown)
+	    	  elseif ToolTip == "Melee" or ToolTip == "Sword" then
+		      	self:UseNormalClick(Cooldown)
 				end
 			end
 		end
@@ -2157,55 +2151,6 @@ function EnableBuso()
 		end
 	end
 end
-
-function ChestBypass()
-	local Character = LocalPlayer.Character
-	local IsAlive = Module.IsAlive(Character)
-
-	if Settings.ChestBypass and IsAlive then
-		local startTick = tick()
-
-		while Settings.ChestBypass and (tick() - startTick) < 4 do
-			Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-
-			local CharPos = Character:GetPivot().Position
-			local Chests = CollectionService:GetTagged("_ChestTagged")
-
-			local Closest, Distance = nil, math.huge
-
-			for i = 1, #Chests do
-				local Chest = Chests[i]
-
-				if not Chest:GetAttribute("IsDisabled") then
-					local Magnitude = (Chest:GetPivot().Position - CharPos).Magnitude
-
-					if Magnitude < Distance then
-						Distance = Magnitude
-						Closest = Chest
-					end
-				end
-			end
-
-			if Closest then
-				Character:PivotTo(CFrame.new(Closest:GetPivot().Position))
-				task.wait(0.2)
-			else
-				break
-			end
-		end
-
-		if Settings.ChestBypass and LocalPlayer.Character then
-			LocalPlayer.Character:BreakJoints()
-			LocalPlayer.CharacterAdded:Wait()
-		end
-	end
-end
-
-task.spawn(function()
-	while task.wait() do
-		pcall(ChestBypass)
-	end
-end)
 
 function GetToolByName(Name)
 	local Cached = Module.Cached.Tools[Name]
