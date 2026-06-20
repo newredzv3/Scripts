@@ -14,7 +14,7 @@ local Scripts = {
     {
       GameId = 10200395747,
       UrlPath = "Grow-a-garden.luau"
-    }
+      }
 }
 
 local fetcher, urls = {}, {}
