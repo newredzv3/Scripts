@@ -1767,7 +1767,7 @@ function FastAttack:UseGunShoot(Character, Equipped)
 end
 		
 	 	function FastAttack.attack()
-			if not Settings.AutoClick then return end
+            if not Settings.AutoClick or (tick() - Module.AttackCooldown) <= 1 then return end
 			if not IsAlive(Player.Character) then return end
 			
 			local self = FastAttack;
@@ -1802,7 +1802,7 @@ end
 					if SUCCESS_SHOOT and SHOOT_FUNCTION then
 						self:UseGunShoot(Character, Equipped)
 					end
-	    	  elseif ToolTip == "Melee" or ToolTip == "Sword" then
+	    	  elseif ToolTip == "Melee" or ToolTip == "Sword" or self.NormalClickFruits[Equipped.Name] then
 		      	self:UseNormalClick(Cooldown)
 				end
 			end
@@ -1947,7 +1947,7 @@ end
 		return BodyVelocity
 	end)()
 
-	Module.Hooking = (function()
+  Module.Hooking = (function()
 		local Hooking = {
 			Skills = CreateDictionary({ "Z", "X", "C", "V", "F" }, true),
 			ClosestsEnemies = {}
