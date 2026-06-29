@@ -569,9 +569,9 @@ local Module = {} do
 	
 	Module.RunFunctions = {} do
 		Module.RunFunctions.Translator = function(Window, Translation)
-			local MakeTab = Window.MakeTab
+			local MakeTab = Library.MakeTab
 			
-			Window.MakeTab = function(self, Configs)
+			Library.MakeTab = function(self, Configs)
 				if Translation[ Configs[1] ] then
 					Configs[1] = Translation[ Configs[1] ]
 				end
