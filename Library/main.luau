@@ -2245,12 +2245,43 @@ do
             end
 
             if aA ~= nil then
-                aM(Color3.fromRGB(67, 181, 129), N(aA) .. " Online")
-            end
-            if aB ~= nil then
-                aM(Color3.fromRGB(86, 101, 105), N(aB) .. " Members")
-            end
-        end
+           aM(Color3.fromRGB(67, 181, 129), N(aA) .. " Online")
+      end
+
+     if aB ~= nil then
+    aM(Color3.fromRGB(86, 101, 105), N(aB) .. " Members")
+end
+end
+
+local function UpdateDiscordStats()
+    if aA and onlineLabel then
+        onlineLabel.Text = N(aA) .. " Online"
+    end
+
+    if aB and membersLabel then
+        membersLabel.Text = N(aB) .. " Members"
+    end
+end
+
+task.spawn(function()
+    while task.wait(10) do
+        UpdateDiscordStats()
+    end
+end)local function UpdateDiscordStats()
+    if aA and onlineLabel then
+        onlineLabel.Text = N(aA) .. " Online"
+    end
+
+    if aB and membersLabel then
+        membersLabel.Text = N(aB) .. " Members"
+    end
+end
+
+task.spawn(function()
+    while task.wait(10) do
+        UpdateDiscordStats()
+    end
+end)
 
         local aM = E("TextLabel", aG, {
             Size = UDim2.new(1, -50, 0, 8),
