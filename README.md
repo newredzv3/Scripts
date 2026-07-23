@@ -3,9 +3,9 @@
 - the script is safe, **KEYLESS** and **FREE** for everyone. made for everyone to get the most out of it
 
 ## Working on
-- Blox Fruits
-- Meme sea
-- Grow a Garden 2
+- 🟢Blox Fruits
+- 🟢Meme sea
+- 🔴Grow a Garden 2
 
 ### global load
 ```lua
