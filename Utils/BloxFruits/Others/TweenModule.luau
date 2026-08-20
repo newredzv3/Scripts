@@ -30,7 +30,7 @@ local function GetCharacter()
     return Player.Character
 end
 
-local function GetVehicleSeat(Character)
+local function GetBoat(Character)
     local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
 
     if not Humanoid or not Humanoid.Sit then
@@ -39,23 +39,62 @@ local function GetVehicleSeat(Character)
 
     local Seat = Humanoid.SeatPart
 
-    if Seat and Seat:IsA("VehicleSeat") then
-        return Seat
+    if not Seat or not Seat:IsA("VehicleSeat") then
+        return nil
     end
 
     local Boats = workspace:FindFirstChild("Boats")
 
-    if Boats then
-        for _, Boat in pairs(Boats:GetChildren()) do
-            local VehicleSeat = Boat:FindFirstChildWhichIsA("VehicleSeat", true)
+    if not Boats then
+        return nil
+    end
 
-            if VehicleSeat and VehicleSeat.Occupant == Humanoid then
-                return VehicleSeat
-            end
+    local Boat = Seat:FindFirstAncestorOfClass("Model")
+
+    if Boat and Boat.Parent == Boats then
+        return Boat
+    end
+
+    for _, v in pairs(Boats:GetChildren()) do
+        local VehicleSeat = v:FindFirstChildWhichIsA("VehicleSeat", true)
+
+        if VehicleSeat and VehicleSeat.Occupant == Humanoid then
+            return v
         end
     end
 
     return nil
+end
+
+local function GetBoatPrimaryPart(Boat, Character)
+    if not Boat then
+        return nil
+    end
+
+    if Boat.PrimaryPart then
+        return Boat.PrimaryPart
+    end
+
+    local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
+    local Seat = Humanoid and Humanoid.SeatPart
+
+    if Seat and Seat:IsA("BasePart") and Seat:IsDescendantOf(Boat) then
+        return Seat
+    end
+
+    local Engine = Boat:FindFirstChild("Engine", true)
+
+    if Engine and Engine:IsA("BasePart") then
+        return Engine
+    end
+
+    local VehicleSeat = Boat:FindFirstChildWhichIsA("VehicleSeat", true)
+
+    if VehicleSeat then
+        return VehicleSeat
+    end
+
+    return Boat:FindFirstChildWhichIsA("BasePart", true)
 end
 
 local function ToggleNoClip(State)
@@ -141,11 +180,15 @@ function PlayerTP:Teleport(TargetCFrame)
         return false
     end
 
+    local Boat = GetBoat(Character)
     local DriveTarget = RootPart
-    local VehicleSeat = GetVehicleSeat(Character)
 
-    if Humanoid.Sit and VehicleSeat then
-        DriveTarget = VehicleSeat
+    if Boat then
+        DriveTarget = GetBoatPrimaryPart(Boat, Character)
+
+        if not DriveTarget then
+            return false
+        end
     elseif Humanoid.Sit then
         Humanoid.Sit = false
         return false
@@ -170,6 +213,11 @@ function PlayerTP:Teleport(TargetCFrame)
             end
 
             if not DriveTarget or not DriveTarget.Parent then
+                PlayerTP:Stop()
+                return
+            end
+
+            if Boat and (not Boat.Parent or not DriveTarget:IsDescendantOf(Boat)) then
                 PlayerTP:Stop()
                 return
             end
@@ -201,12 +249,30 @@ function PlayerTP:Teleport(TargetCFrame)
                 MoveStep = Direction * Distance
             end
 
-            DriveTarget.AssemblyLinearVelocity = Vector3.zero
-            DriveTarget.CFrame = CFrame.new(CurrentPosition + MoveStep, TargetPosition)
+            local NewPosition = CurrentPosition + MoveStep
+
+            if Boat then
+                local BoatPivot = Boat:GetPivot()
+                local Relative = DriveTarget.CFrame:ToObjectSpace(BoatPivot)
+                local NewCFrame = CFrame.new(NewPosition, TargetPosition)
+                local NewPivot = NewCFrame * Relative
+
+                Boat:PivotTo(NewPivot)
+            else
+                DriveTarget.AssemblyLinearVelocity = Vector3.zero
+                DriveTarget.CFrame = CFrame.new(NewPosition, TargetPosition)
+            end
         end
 
         if ActiveTween and CurrentTweenId == TweenId and _ENV.OnFarm ~= false and DriveTarget and DriveTarget.Parent then
-            DriveTarget.CFrame = TargetCFrame
+            if Boat and Boat.Parent then
+                local BoatPivot = Boat:GetPivot()
+                local Relative = DriveTarget.CFrame:ToObjectSpace(BoatPivot)
+                local NewCFrame = CFrame.new(TargetPosition, TargetPosition + TargetCFrame.LookVector)
+                Boat:PivotTo(NewCFrame * Relative)
+            else
+                DriveTarget.CFrame = TargetCFrame
+            end
         end
 
         if CurrentTweenId == TweenId then
