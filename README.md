@@ -1,5 +1,5 @@
-# redz hub
-- **REDZ HUB** is just a script for automations
+# DSPK Hub / rz
+- **DSPK HUB** is just a script for automations
 - the script is safe, **KEYLESS** and **FREE** for everyone. made for everyone to get the most out of it
 
 ## Working on
@@ -22,5 +22,3 @@ local Settings = {
 }
 loadstring(game:HttpGet("https://raw.githubusercontent.com/newredzv3/Scripts/refs/heads/main/main.luau"))(Settings)
 ```
-
-### This Redz Hub is a fan-made version, we welcome criticism :)  
