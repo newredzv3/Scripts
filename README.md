@@ -5,7 +5,7 @@
 ## Working on
 - 🟢Blox Fruits
 - 🟢Meme sea
-- 🔴Grow a Garden 2
+- 🟢Grow a Garden 2
 
 ### global load
 ```lua
