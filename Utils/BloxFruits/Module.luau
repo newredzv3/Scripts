@@ -13,6 +13,11 @@ local TeleportService: TeleportService = game:GetService("TeleportService")
 local RunService: RunService = game:GetService("RunService")
 local Players: Players = game:GetService("Players")
 
+local HttpService = game:GetService("HttpService")
+local ItemReplicationService = require(ReplicatedStorage.ItemReplicationService)
+local ItemId = require(ReplicatedStorage.Economy.ItemId)
+local ItemConfig = require(ReplicatedStorage.ItemConfig)
+
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local GunValidator: RemoteEvent = Remotes:WaitForChild("Validator2")
 local CommF: RemoteFunction = Remotes:WaitForChild("CommF_")
@@ -51,6 +56,7 @@ local sethiddenproperty: (Instance, string, any?) -> (nil) = sethiddenproperty o
 
 local setupvalue: (any, number, any?) -> (nil) = setupvalue or (debug and debug.setupvalue)
 local getupvalue: (any, number) -> any = getupvalue or (debug and debug.getupvalue)
+local EventShop = require(game.ReplicatedStorage.Controllers.UI.EventShop)
 
 local BRING_TAG: string = _ENV._Bring_Tag or `b{math.random(80, 2e4)}t`
 local KILLAURA_TAG: string = _ENV._KillAura_Tag or `k{math.random(120, 2e4)}t`
@@ -233,6 +239,11 @@ elseif table.find({7449423635, 100117331123089}, game.PlaceId) then
     SeaId = 3
 end
 
+local LevelCap = game.Players.LocalPlayer:GetAttribute("LevelCap")
+if LevelCap and LevelCap > 2800 and LevelCap <= 3000 then
+    LevelCap = 2800
+end
+
 local Module = {} do
 	local Cached = {
 		Closest = nil,
@@ -245,10 +256,10 @@ local Module = {} do
 	}
 	
 	Module.GameData = {
-		Sea =  SeaId,
+		Sea = SeaId,
 		SeasName = { "Main", "Dressrosa", "Zou" },
 		MaxMastery = 600,
-		MaxLevel = game.Workspace:GetAttribute("LEVEL_CAP"),
+		MaxLevel = LevelCap,
         StringVersion = require(ReplicatedStorage.BuildInfo).VERSION
 	}
 	
@@ -302,202 +313,243 @@ local Module = {} do
 			["rbxassetid://118054805452821"] = "Gas",
 			["rbxassetid://95749033139458"] = "Dragon East"
 		}
+
+       CACHE_NPC_LIST = require(game.ReplicatedStorage.GuideModule).Data.NPCList
+function getQuestPosition(Name)
+    for _, v in next, CACHE_NPC_LIST do
+        if typeof(v) == "table" then
+            for _, x in next, v do
+                if x == Name then
+                    local Position = v.Position
+                    if typeof(Position) == "CFrame" then
+                        return Position
+                    elseif typeof(Position) == "Vector3" then
+                        return CFrame.new(Position)
+                    end
+                end
+            end
+        end
+    end
+    return nil
+end
 		
-		Module.Bosses = {
-			-- Bosses Sea 1
-			["Saber Expert"] = {
-				NoQuest = true,
-				Position = CFrame.new(-1461, 30, -51)
-			},
-			["The Saw"] = {
-				RaidBoss = true,
-				Position = CFrame.new(-690, 15, 1583)
-			},
-			["Greybeard"] = {
-				RaidBoss = true,
-				Position = CFrame.new(-5043, 25, 4262)
-			},
-			["The Gorilla King"] = {
-				IsBoss = true,
-				Level = 20,
-				Position = CFrame.new(-1128, 6, -451),
-				Quest = {"JungleQuest", CFrame.new(-1598, 37, 153)}
-			},
-			["Bobby"] = {
-				IsBoss = true,
-				Level = 55,
-				Position = CFrame.new(-1131, 14, 4080),
-				Quest = {"BuggyQuest1", CFrame.new(-1140, 4, 3829)}
-			},
-			["Yeti"] = {
-				IsBoss = true,
-				Level = 105,
-				Position = CFrame.new(1185, 106, -1518),
-				Quest = {"SnowQuest", CFrame.new(1385, 87, -1298)}
-			},
-			["Vice Admiral"] = {
-				IsBoss = true,
-				Level = 130,
-				Position = CFrame.new(-4807, 21, 4360),
-				Quest = {"MarineQuest2", CFrame.new(-5035, 29, 4326), 2}
-			},
-			["Swan"] = {
-				IsBoss = true,
-				Level = 240,
-				Position = CFrame.new(5230, 4, 749),
-				Quest = {"ImpelQuest", CFrame.new(5191, 4, 692)}
-			},
-			["Chief Warden"] = {
-				IsBoss = true,
-				Level = 230,
-				Position = CFrame.new(5230, 4, 749),
-				Quest = {"ImpelQuest", CFrame.new(5191, 4, 692), 2}
-			},
-			["Warden"] = {
-				IsBoss = true,
-				Level = 220,
-				Position = CFrame.new(5230, 4, 749),
-				Quest = {"ImpelQuest", CFrame.new(5191, 4, 692), 1}
-			},
-			["Magma Admiral"] = {
-				IsBoss = true,
-				Level = 350,
-				Position = CFrame.new(-5694, 18, 8735),
-				Quest = {"MagmaQuest", CFrame.new(-5319, 12, 8515)}
-			},
-			["Fishman Lord"] = {
-				IsBoss = true,
-				Level = 425,
-				Position = CFrame.new(61350, 31, 1095),
-				Quest = {"FishmanQuest", CFrame.new(61122, 18, 1567)}
-			},
-			["Wysper"] = {
-				IsBoss = true,
-				Level = 500,
-				Position = CFrame.new(-7927, 5551, -637),
-				Quest = {"SkyExp1Quest", CFrame.new(-7861, 5545, -381)}
-			},
-			["Thunder God"] = {
-				IsBoss = true,
-				Level = 575,
-				Position = CFrame.new(-7751, 5607, -2315),
-				Quest = {"SkyExp2Quest", CFrame.new(-7903, 5636, -1412)}
-			},
-			["Cyborg"] = {
-				IsBoss = true,
-				Level = 675,
-				Position = CFrame.new(6138, 10, 3939),
-				Quest = {"FountainQuest", CFrame.new(5258, 39, 4052)}
-			},
-			
-			-- Bosses Sea 2
-			["Don Swan"] = {
-				RaidBoss = true,
-				Position = CFrame.new(2289, 15, 808)
-			},
-			["Cursed Captain"] = {
-				RaidBoss = true,
-				Position = CFrame.new(912, 186, 33591)
-			},
-			["Darkbeard"] = {
-				RaidBoss = true,
-				Position = CFrame.new(3695, 13, -3599)
-			},
-			["Diamond"] = {
-				IsBoss = true,
-				Level = 750,
-				Position = CFrame.new(-1569, 199, -31),
-				Quest = {"Area1Quest", CFrame.new(-427, 73, 1835)}
-			},
-			["Jeremy"] = {
-				IsBoss = true,
-				Level = 850,
-				Position = CFrame.new(2316, 449, 787),
-				Quest = {"Area2Quest", CFrame.new(635, 73, 919)}
-			},
-			["Orbitus"] = {
-				IsBoss = true,
-				Level = 925,
-				Position = CFrame.new(-2086, 73, -4208),
-				Quest = {"MarineQuest3", CFrame.new(-2441, 73, -3219)}
-			},
-			["Smoke Admiral"] = {
-				IsBoss = true,
-				Level = 1150,
-				Position = CFrame.new(-5078, 24, -5352),
-				Quest = {"IceSideQuest", CFrame.new(-6229, 82, -4853)}
-			},
-			["Awakened Ice Admiral"] = {
-				IsBoss = true,
-				Level = 1400,
-				Position = CFrame.new(6473, 297, -6944),
-				Quest = {"FrostQuest", CFrame.new(5668, 28, -6484)}
-			},
-			["Tide Keeper"] = {
-				IsBoss = true,
-				Level = 1475,
-				Position = CFrame.new(-3711, 77, -11469),
-				Quest = {"ForgottenQuest", CFrame.new(-3056, 240, -10145)}
-			},
-			
-			-- Bosses Sea 3
-			["Tyrant of the Skies"] = {
-				RaidBoss = true,
-				Position = CFrame.new(-16252, 153, 1394)
-			},
-			["Cake Prince"] = {
-				RaidBoss = true,
-				Position = CFrame.new(-2103, 70, -12165)
-			},
-			["Dough King"] = {
-				RaidBoss = true,
-				Position = CFrame.new(-2103, 70, -12165)
-			},
-			["rip_indra True Form"] = {
-				RaidBoss = true,
-				Position = CFrame.new(-5333, 424, -2673)
-			},
-			["Stone"] = {
-				IsBoss = true,
-				Level = 1550,
-				Position = CFrame.new(-1049, 40, 6791),
-				Quest = {"PiratePortQuest", CFrame.new(-449, 109, 5950)}
-			},
-			["Hydra Leader"] = {
-				IsBoss = true,
-				Level = 1675,
-				Position = CFrame.new(5836, 1019, -83),
-				Quest = {"VenomCrewQuest", CFrame.new(5214, 1004, 761)}
-			},
-			["Kilo Admiral"] = {
-				IsBoss = true,
-				Level = 1750,
-				Position = CFrame.new(2904, 509, -7349),
-				Quest = {"MarineTreeIsland", CFrame.new(2485, 74, -6788)}
-			},
-			["Captain Elephant"] = {
-				IsBoss = true,
-				Level = 1875,
-				Position = CFrame.new(-13393, 319, -8423),
-				Quest = {"DeepForestIsland", CFrame.new(-13233, 332, -7626)}
-			},
-			["Beautiful Pirate"] = {
-				IsBoss = true,
-				Level = 1950,
-				Position = CFrame.new(5370, 22, -89),
-				Quest = {"DeepForestIsland2", CFrame.new(-12682, 391, -9901)}
-			},
-			["Cake Queen"] = {
-				IsBoss = true,
-				Level = 2175,
-				Position = CFrame.new(-710, 382, -11150),
-				Quest = {"IceCreamIslandQuest", CFrame.new(-818, 66, -10964)}
-			},
-			["Longma"] = {
-				NoQuest = true,
-				Position = CFrame.new(-10218, 333, -9444)
-			}
-		}
+		if SeaId == 1 then
+    Module.Bosses = {
+        ["Saber Expert"] = {
+            NoQuest = true,
+            Position = game:GetService("ReplicatedStorage").FortBuilderReplicatedSpawnPositionsFolder["Saber Expert"].CFrame
+        },
+
+        ["The Saw"] = {
+            RaidBoss = true,
+            Position = game:GetService("ReplicatedStorage").FortBuilderReplicatedSpawnPositionsFolder["The Saw"].CFrame
+        },
+
+        ["Greybeard"] = {
+            RaidBoss = true,
+            Position = game:GetService("ReplicatedStorage").FortBuilderReplicatedSpawnPositionsFolder["Greybeard"].CFrame
+        },
+
+        ["The Gorilla King"] = {
+            IsBoss = true,
+            Level = 20,
+            Position = game:GetService("ReplicatedStorage").FortBuilderReplicatedSpawnPositionsFolder["The Gorilla King"].CFrame,
+            Quest = {"JungleQuest", getQuestPosition("JungleQuest")}
+        },
+
+        ["Bobby"] = {
+            IsBoss = true,
+            Level = 55,
+            Position = game:GetService("ReplicatedStorage").FortBuilderReplicatedSpawnPositionsFolder["Chef"].CFrame,
+            Quest = {"BuggyQuest1", getQuestPosition("BuggyQuest1")}
+        },
+
+        ["Yeti"] = {
+            IsBoss = true,
+            Level = 105,
+            Position = game:GetService("ReplicatedStorage").FortBuilderReplicatedSpawnPositionsFolder["Yeti"].CFrame,
+            Quest = {"SnowQuest", getQuestPosition("SnowQuest")}
+        },
+
+        ["Vice Admiral"] = {
+            IsBoss = true,
+            Level = 130,
+            Position = game:GetService("ReplicatedStorage").FortBuilderReplicatedSpawnPositionsFolder["Vice Admiral"].CFrame,
+            Quest = {"MarineQuest2", getQuestPosition("MarineQuest2"), 2}
+        },
+        ["Warden"] = {
+            IsBoss = true,
+            Level = 220,
+            Position = game:GetService("ReplicatedStorage").FortBuilderReplicatedSpawnPositionsFolder["Warden"].CFrame,
+            Quest = {"ImpelQuest", getQuestPosition("ImpelQuest"), 2}
+        },
+
+        ["Magma General"] = {
+            IsBoss = true,
+            Level = 350,
+            Position = game:GetService("ReplicatedStorage").FortBuilderReplicatedSpawnPositionsFolder["Magma Admiral"].CFrame,
+            Quest = {"MagmaQuest", getQuestPosition("MagmaQuest")}
+        },
+
+        ["Fishman Lord"] = {
+            IsBoss = true,
+            Level = 425,
+            Position = game:GetService("ReplicatedStorage").FortBuilderReplicatedSpawnPositionsFolder["Fishman Lord"].CFrame,
+            Quest = {"FishmanQuest", getQuestPosition("FishmanQuest")}
+        },
+
+        ["Sky Warlord"] = {
+            IsBoss = true,
+            Level = 500,
+            Position = game:GetService("ReplicatedStorage").FortBuilderReplicatedSpawnPositionsFolder["Wysper"].CFrame,
+            Quest = {"SkyExp1Quest", getQuestPosition("SkyExp1Quest"), 3}
+        },
+
+        ["Lightning God"] = {
+            IsBoss = true,
+            Level = 575,
+            Position = game:GetService("ReplicatedStorage").FortBuilderReplicatedSpawnPositionsFolder["Thunder God"].CFrame,
+            Quest = {"SkyExp2Quest", getQuestPosition("SkyExp2Quest"), 3}
+        },
+
+        ["Cyborg"] = {
+            IsBoss = true,
+            Level = 675,
+            Position = game:GetService("ReplicatedStorage").FortBuilderReplicatedSpawnPositionsFolder["Cyborg"].CFrame,
+            Quest = {"FountainQuest", getQuestPosition("FountainQuest")}
+        }
+    }
+
+elseif SeaId == 2 then
+    Module.Bosses = {
+        ["Don Swan"] = {
+            RaidBoss = true,
+            Position = CFrame.new(2289, 15, 808)
+        },
+
+        ["Cursed Captain"] = {
+            RaidBoss = true,
+            Position = CFrame.new(912, 186, 33591)
+        },
+
+        ["Darkbeard"] = {
+            RaidBoss = true,
+            Position = CFrame.new(3695, 13, -3599)
+        },
+
+        ["Diamond"] = {
+            IsBoss = true,
+            Level = 750,
+            Position = CFrame.new(-1569, 199, -31),
+            Quest = {"Area1Quest", CFrame.new(-427, 73, 1835)}
+        },
+
+        ["Jeremy"] = {
+            IsBoss = true,
+            Level = 850,
+            Position = CFrame.new(2316, 449, 787),
+            Quest = {"Area2Quest", CFrame.new(635, 73, 919)}
+        },
+
+        ["Orbitus"] = {
+            IsBoss = true,
+            Level = 925,
+            Position = CFrame.new(-2086, 73, -4208),
+            Quest = {"MarineQuest3", CFrame.new(-2441, 73, -3219)}
+        },
+
+        ["Smoke Admiral"] = {
+            IsBoss = true,
+            Level = 1150,
+            Position = CFrame.new(-5078, 24, -5352),
+            Quest = {"IceSideQuest", CFrame.new(-6229, 82, -4853)}
+        },
+
+        ["Awakened Ice Admiral"] = {
+            IsBoss = true,
+            Level = 1400,
+            Position = CFrame.new(6473, 297, -6944),
+            Quest = {"FrostQuest", CFrame.new(5668, 28, -6484)}
+        },
+
+        ["Tide Keeper"] = {
+            IsBoss = true,
+            Level = 1475,
+            Position = CFrame.new(-3711, 77, -11469),
+            Quest = {"ForgottenQuest", CFrame.new(-3056, 240, -10145)}
+        }
+    }
+
+elseif SeaId == 3 then
+    Module.Bosses = {
+        ["Tyrant of the Skies"] = {
+            RaidBoss = true,
+            Position = CFrame.new(-16252, 153, 1394)
+        },
+
+        ["Cake Prince"] = {
+            RaidBoss = true,
+            Position = CFrame.new(-2103, 70, -12165)
+        },
+
+        ["Dough King"] = {
+            RaidBoss = true,
+            Position = CFrame.new(-2103, 70, -12165)
+        },
+
+        ["rip_indra True Form"] = {
+            RaidBoss = true,
+            Position = CFrame.new(-5333, 424, -2673)
+        },
+
+        ["Stone"] = {
+            IsBoss = true,
+            Level = 1550,
+            Position = CFrame.new(-1049, 40, 6791),
+            Quest = {"PiratePortQuest", CFrame.new(-449, 109, 5950)}
+        },
+
+        ["Hydra Leader"] = {
+            IsBoss = true,
+            Level = 1675,
+            Position = CFrame.new(5836, 1019, -83),
+            Quest = {"VenomCrewQuest", CFrame.new(5214, 1004, 761)}
+        },
+
+        ["Kilo Admiral"] = {
+            IsBoss = true,
+            Level = 1750,
+            Position = CFrame.new(2904, 509, -7349),
+            Quest = {"MarineTreeIsland", CFrame.new(2485, 74, -6788)}
+        },
+
+        ["Captain Elephant"] = {
+            IsBoss = true,
+            Level = 1875,
+            Position = CFrame.new(-13393, 319, -8423),
+            Quest = {"DeepForestIsland", CFrame.new(-13233, 332, -7626)}
+        },
+
+        ["Beautiful Pirate"] = {
+            IsBoss = true,
+            Level = 1950,
+            Position = CFrame.new(5370, 22, -89),
+            Quest = {"DeepForestIsland2", CFrame.new(-12682, 391, -9901)}
+        },
+
+        ["Cake Queen"] = {
+            IsBoss = true,
+            Level = 2175,
+            Position = CFrame.new(-710, 382, -11150),
+            Quest = {"IceCreamIslandQuest", CFrame.new(-818, 66, -10964)}
+        },
+
+        ["Longma"] = {
+            NoQuest = true,
+            Position = CFrame.new(-10218, 333, -9444)
+        }
+    }
+end
 		
 		Module.Shop = {
             --[[{"Magic Elf", {{"Buy 2x EXP", {"Candies", "Buy", 1, 1}}, {"Buy Stats Refund", {"Candies", "Buy", 1, 2}}, {"Buy Race Reroll", {"Candies", "Buy", 1, 3}}}},
@@ -569,9 +621,9 @@ local Module = {} do
 	
 	Module.RunFunctions = {} do
 		Module.RunFunctions.Translator = function(Window, Translation)
-			local MakeTab = Library.MakeTab
+			local MakeTab = Window.MakeTab
 			
-			Library.MakeTab = function(self, Configs)
+			Window.MakeTab = function(self, Configs)
 				if Translation[ Configs[1] ] then
 					Configs[1] = Translation[ Configs[1] ]
 				end
@@ -647,9 +699,9 @@ local Module = {} do
 				return NewTab
 			end
 		end
-		
-		Module.RunFunctions.Quests = function(self, QuestsModule, getTasks)
-			local MaxLvl = ({ {0, 700}, {700, 1500}, {1500, math.huge} })[self.Sea]
+
+     Module.RunFunctions.Quests = function(self, QuestsModule, getTasks)
+			local MaxLvl = ({ {0, 700}, {700, 1500}, {1500, LevelCap} })[self.Sea]
 			local bl_Quests = {"BartiloQuest", "MarineQuest", "CitizenQuest"}
 			
 			for name, task in QuestsModule do
@@ -768,56 +820,67 @@ end
          task.spawn(ServerBrowser.InvokeServer, ServerBrowser, "teleport", game.JobId)
 	end
 
-   function Module:ServerHop(bO)
-       if not bO then
-        bO = 10
-    end
-    ticklon = tick()
-    repeat
-        task.wait()
-    until tick() - ticklon >= 1
-    local function Hop()
-        for r = 1, math.huge do
-            local bP = game:GetService("ReplicatedStorage").__ServerBrowser:InvokeServer(r)
-            for k, v in pairs(bP) do
-                if k ~= game.JobId and v["Count"] < bO then
-                   game:GetService("ReplicatedStorage").__ServerBrowser:InvokeServer("teleport", k)
-                end
+   function Module:ServerHop()
+        local PlaceID = game.PlaceId
+        local AllIDs = {}
+        local foundAnything = ""
+        local actualHour = os.date("!*t").hour
+        local Deleted = false
+        function TPReturner()
+            local Site;
+            if foundAnything == "" then
+                Site = game.HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100'))
+            else
+                Site = game.HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100&cursor=' .. foundAnything))
             end
-        end
-        return false
-    end
-    if not getgenv().Loaded then
-        local function bQ(v)
-            if v.Name == "ErrorPrompt" then
-                if v.Visible then
-                    if v.TitleFrame.ErrorTitle.Text == "Teleport Failed" then
-                        HopServer()
-                        v.Visible = false
-                    end
-                end
-                v:GetPropertyChangedSignal("Visible"):Connect(
-                    function()
-                        if v.Visible then
-                            if v.TitleFrame.ErrorTitle.Text == "Teleport Failed" then
-                                HopServer()
-                                v.Visible = false
+            local ID = ""
+            if Site.nextPageCursor and Site.nextPageCursor ~= "null" and Site.nextPageCursor ~= nil then
+                foundAnything = Site.nextPageCursor
+            end
+            local num = 0;
+            for i,v in pairs(Site.data) do
+                local Possible = true
+                ID = tostring(v.id)
+                if tonumber(v.maxPlayers) > tonumber(v.playing) then
+                    for _,Existing in pairs(AllIDs) do
+                        if num ~= 0 then
+                            if ID == tostring(Existing) then
+                                Possible = false
+                            end
+                        else
+                            if tonumber(actualHour) ~= tonumber(Existing) then
+                                local delFile = pcall(function()
+                                    AllIDs = {}
+                                    table.insert(AllIDs, actualHour)
+                                end)
                             end
                         end
+                        num = num + 1
                     end
-                )
+                    if Possible == true then
+                        table.insert(AllIDs, ID)
+                        wait()
+                        pcall(function()
+                            wait()
+                            ReplicatedStorage.__ServerBrowser:InvokeServer("teleport", ID)
+                        end)
+                        wait(4)
+                    end
+                end
             end
         end
-        for k, v in pairs(game.CoreGui.RobloxPromptGui.promptOverlay:GetChildren()) do
-            bQ(v)
+        function Teleport() 
+            while wait() do
+                pcall(function()
+                    TPReturner()
+                    if foundAnything ~= "" then
+                        TPReturner()
+                    end
+                end)
+            end
         end
-        game.CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(bQ)
-        getgenv().Loaded = true
-    end
-    while not Hop() do
-        wait()
-    end
-  end
+        Teleport()
+   end
 	
 	function Module.EnemySpawned(EnemyName)
 		local Enemies = Module.Enemies
@@ -830,6 +893,10 @@ end
 	
 	function Module:TravelTo(Sea: number?): (nil)
 		Module.FireRemote(`Travel{self.GameData.SeasName[Sea]}`)
+	end
+
+	function Module:Open(EventName: string)
+        EventShop:Open(EventName)
 	end
 
 	function Module.EquipTool(ToolName: string, ByType: boolean?): (nil)
@@ -1050,34 +1117,64 @@ end
 			return Nearest
 		end
 	})
-	
+
+	Module.Berries = setmetatable({}, {
+    __call = function(self, BerryArray)
+        if self.Debounce and (tick() - self.Debounce) < 0.5 then
+            return self.Cached or {}
+        end
+
+        local BushList = CollectionService:GetTagged("BerryBush")
+        local Result = {}
+
+        for i = 1, #BushList do
+            local Bush = BushList[i]
+
+            for AttributeName, BerryName in pairs(Bush:GetAttributes()) do
+            
+                if not BerryArray or table.find(BerryArray, BerryName) then
+                    if type(BerryName) == "string" then
+                        table.insert(Result, BerryName)
+                    end
+                    break 
+                end
+            end
+        end
+
+        self.Debounce = tick()
+        self.Cached = Result
+        return Result
+    end
+})													
+														
 	Module.FruitsName = setmetatable({}, {
-		__index = function(self, Fruit)
-			local RealFruitsName = Module.FruitsId
-			local Name = Fruit.Name
-			
-			if Name ~= "Fruit " then
-				rawset(self, Fruit, Name)
-				return Name
-			end
-			
-			rawset(self, Fruit, "Fruit [ ??? ]")
-			
-			local Model = Fruit:WaitForChild("Fruit", 9e9)
-			local Idle = FastWait(2, Model, "Idle") or FastWait(1, Model, "Animation") or FastWait(1, Model, "Fruit")
-			
-			if Idle and (Idle:IsA("Animation") or Idle:IsA("MeshPart")) then
-				local Property = if Idle:IsA("MeshPart") then "MeshId" else "AnimationId"
-				local RealName = RealFruitsName[Idle[Property] or ""]
-				
-				if RealName and type(RealName) == "string" then
-					rawset(self, Fruit, `Fruit [ {RealName} ]`)
-				end
-			end
-			
-			return rawget(self, Fruit)
-		end
-	})
+      __index = function(self, Fruit)
+          if typeof(Fruit) ~= "Instance" or not Fruit.Parent then
+            return "Fruit [ ??? ]"
+        end
+        local RealFruitsName = Module.FruitsId
+        rawset(self, Fruit, "Fruit [ ??? ]")
+        task.spawn(function()
+            pcall(function()
+                if not Fruit.Parent then return end
+                local Model = Fruit:WaitForChild("Fruit", 5)
+                if not Model or not Fruit.Parent then return end
+                local Idle = FastWait(2, Model, "Idle") or FastWait(1, Model, "Animation") or FastWait(1, Model, "Fruit")
+                if Idle and (Idle:IsA("Animation") or Idle:IsA("MeshPart")) and Fruit.Parent then
+                    local Property = if Idle:IsA("MeshPart") then "MeshId" else "AnimationId"
+                    local RealName = RealFruitsName[Idle[Property] or ""]
+                    if RealName and type(RealName) == "string" then
+                        if not RealName:find("%-") then
+                            RealName = RealName .. "-" .. RealName
+                        end
+                        rawset(self, Fruit, `Fruit [ {RealName} ]`)
+                    end
+                end
+            end)
+        end)
+        return "Fruit [ ??? ]"
+    end
+})
 
 Module.Enemies = (function()
 		local EnemiesModule = CreateDictionary({
@@ -1089,7 +1186,7 @@ Module.Enemies = (function()
 
 		local TagsMobs = {
 			__Elite = CreateDictionary({ "Deandre", "Diablo", "Urban" }, true),
-			__Bones = CreateDictionary({ "Reborn Skeleton", "Living Zombie", "Demonic Soul", "Posessed Mummy" }, true),
+			__Bones = CreateDictionary({ "Living Zombie", "Demonic Soul", "Posessed Mummy" }, true),
 			__CakePrince = CreateDictionary({ "Head Baker", "Baking Staff", "Cake Guard", "Cookie Crafter" }, true),
 			__TyrantSkies = CreateDictionary({ "Sun-kissed Warrior", "Skull Slayer", "Isle Champion", "Serpent Hunter" }, true)
 		}
@@ -1253,11 +1350,13 @@ Module.Enemies = (function()
 		end
 		
 		local function Bring(Enemy)
-      local PlayerRootPart = (Player.Character or Player.CharacterAdded()):WaitForChild("HumanoidRootPart")
+local PlayerRootPart = (Player.Character or Player.CharacterAdded()):WaitForChild("HumanoidRootPart")
       local RootPart = Enemy:WaitForChild("HumanoidRootPart")
       local Humanoid = Enemy:WaitForChild("Humanoid")
       local EnemyName = Enemy.Name
-      pcall(sethiddenproperty, Player, "SimulationRadius", math.huge)
+
+      sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", 112412400000)
+      sethiddenproperty(game.Players.LocalPlayer, "MaxSimulationRadius", 112412400000)
       
       local BodyPosition = Instance.new("BodyPosition", RootPart)
       BodyPosition.Position = RootPart.Position
@@ -1268,28 +1367,44 @@ Module.Enemies = (function()
         local Target = Cached.Bring[if Module.IsSuperBring then "ALL_MOBS" else EnemyName]
         
         if Target and (PlayerRootPart.Position - RootPart.Position).Magnitude <= Settings.BringDistance then
-          if (RootPart.Position - Target.Position).Magnitude <= 70 then
+       if _ENV.rz_EnabledOptions.Ectoplasm then
+           if (RootPart.Position - Target.Position).Magnitude <= 200 then
             RootPart.CFrame = Target
             RootPart.CanCollide = false
           else
             RootPart.CanCollide = false
             BodyPosition.Position = Target.Position
           end
+       elseif _ENV.rz_EnabledOptions.DungeonKill then
+       if (RootPart.Position - Target.Position).Magnitude <= 150 and not Enemy:GetAttribute("RaidBoss") then
+            RootPart.CFrame = Target
+            RootPart.CanCollide = false
+          else
+            RootPart.CanCollide = false
+            BodyPosition.Position = Target.Position
+          end
+         else
+          if (RootPart.Position - Target.Position).Magnitude <= 250 then
+            RootPart.CFrame = Target
+            RootPart.CanCollide = false
+          else
+            RootPart.CanCollide = false
+            BodyPosition.Position = Target.Position
+          end
+      end
         end;task.wait()
       end
       if Enemy and Enemy:HasTag(BRING_TAG) then Enemy:RemoveTag(BRING_TAG) end
-    end
+end
 		
 		local function KillAura(Enemy)
 			local Humanoid = Enemy:FindFirstChild("Humanoid")
 			local RootPart = Enemy:FindFirstChild("HumanoidRootPart")
 			
-			pcall(sethiddenproperty, Player, "SimulationRadius", math.huge)
-			
+	       sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", 112412400000)
+           sethiddenproperty(game.Players.LocalPlayer, "MaxSimulationRadius", 112412400000)
+
 			if Humanoid and RootPart then
-				RootPart.CanCollide = false
-				RootPart.Size = Vector3.new(60, 60, 60)
-				Humanoid:ChangeState(15)
 				Humanoid.Health = 0
 				task.wait()
 				Enemy:RemoveTag(KILLAURA_TAG)
@@ -1304,8 +1419,44 @@ Module.Enemies = (function()
 		
 		return EnemiesModule
 	end)()
-	
-	Module.Inventory = (function()
+
+  local function safeGetItems()
+    local ok, result = pcall(function()
+        return ItemReplicationService:GetItems()
+    end)
+    if ok and result then
+        return result
+    end
+    return {}
+end
+
+local function getInventory()
+    local Items = {}
+    for _, v in ipairs(safeGetItems()) do
+        local itemId = v.ItemId
+        local dataResult = itemId and ItemId.getDataFromId(itemId)
+        if dataResult and dataResult:isOk() then
+            local ItemData = dataResult:unwrap()
+            local key = ItemData.StorageKey
+            local entry = Items[key]
+            if not entry then
+                entry = { Name = key, Type = ItemData.Type, ItemId = itemId, Count = 0 }
+                Items[key] = entry
+            end
+            entry.NetworkedUID = v.NetworkedUID or entry.NetworkedUID
+            if v.Key == "Quantity" then
+                entry.Count = tonumber(v.Value) or 0
+            elseif v.Key == "IsOwned" then
+                entry.Owned = v.Value == true
+            elseif v.Key == "Mastery" then
+                entry.Mastery = tonumber(v.Value)
+            end
+        end
+    end
+    return Items
+end
+
+ Module.Inventory = (function()
 		local Inventory = {
 			Unlocked = setmetatable({}, { __index = function() return false end }),
 			Mastery = setmetatable({}, { __index = function() return 0 end }),
@@ -1315,46 +1466,46 @@ Module.Enemies = (function()
 		}
 		
 		function Inventory:UpdateItem(item)
-			if type(item) == "table" then
-				if item.Type == "Wear" then
-					item.Type = "Accessory"
-				end
-				
-				local Name = item.Name
-				
-				self.Items[Name] = item
-				
-				if not self.Unlocked[Name] then self.Unlocked[Name] = true end
-				if item.Count then self.Count[Name] = item.Count end
-				if item.Mastery then self.Mastery[Name] = item.Mastery end
-				if item.MasteryRequirements then self.MasteryRequirements[Name] = item.MasteryRequirements end
-			end
-		end
-		
-		function Inventory:RemoveItem(ItemName)
-			if type(ItemName) == "string" then
-				self.Unlocked[ItemName] = nil
-				self.Mastery[ItemName] = nil
-				self.Count[ItemName] = nil
-				self.Items[ItemName] = nil
-			end
-		end
+    if type(item) ~= "table" or not item.Name then
+        return
+    end
+    if item.Type == "Wear" then
+        item.Type = "Accessory"
+    end
+    local name = item.Name
+    local count = item.Count
+    local mastery = tonumber(item.Mastery)
+    self.Items[name] = item
+    self.Unlocked[name] = true
+    if count ~= nil then
+        self.Count[name] = count
+    end
+    if mastery ~= nil then
+        self.Mastery[name] = mastery
+    end
+    if item.MasteryRequirements ~= nil then
+        self.MasteryRequirements[name] = item.MasteryRequirements
+    end
+end
+
+      function Inventory:Refresh() for _, item in pairs(getInventory()) do self:UpdateItem(item) end end
+      Inventory:Refresh()
+      spawn(function()
+        while task.wait() do
+            pcall(function()
+                 Inventory:Refresh() 
+            end)
+        end
+    end)
 		
 		local function OnClientEvent(Method, ...)
-			if Method == "ItemChanged" then
-				Inventory:UpdateItem(...)
-			elseif Method == "ItemAdded" then
-				Inventory:UpdateItem(...)
-			elseif Method == "ItemRemoved" then
-				Inventory:RemoveItem(...)
-			elseif Method == "Notify" then
+			if Method == "Notify" then
 				Module.Signals.Notify:Fire(...)
 			end
 		end
 		
 		task.spawn(function()
-			table.insert(Connections, CommE.OnClientEvent:Connect(OnClientEvent))
-			for _, item in ipairs(Module.FireRemote("getInventory")) do Inventory:UpdateItem(item) end
+			table.insert(Connections, CommE.OnClientEvent:Connect(OnClientEvent)) 
 		end)
 		
 		return Inventory
@@ -1362,7 +1513,7 @@ Module.Enemies = (function()
 
    Module.FastAttack = (function()
 		local FastAttack = {
-			Distance = 90,
+			Distance = 55,
 			attackMobs = true,
 			attackPlayers = true,
 			Equipped = nil,
@@ -1376,7 +1527,7 @@ Module.Enemies = (function()
 					MaxOverheat = 3,
 					Cooldown = 0,
 					TotalOverheat = 0,
-					Distance = 500,
+					Distance = 300,
 					Shooting = false
 				}
 			},
@@ -1422,7 +1573,8 @@ Module.Enemies = (function()
 		
 		FastAttack.ShootsFunctions = {
 			["Skull Guitar"] = function(self: FastAttack, Equipped: Tool, Position: Vector3): (nil)
-				Equipped.RemoteEvent:FireServer("TAP", Position) -- Events.ShootSoulGuitar:Invoke(Position)
+                local humanoid = Equipped.Parent:FindFirstChildOfClass("Humanoid")
+                for _, v in ipairs(humanoid:GetChildren()) do if v:IsA("RemoteFunction") and v.Name == "" then v:InvokeServer("TAP", Position) end end
 			end
 		}
 		
@@ -1485,6 +1637,10 @@ Module.Enemies = (function()
 		local function CanChangeGunTarget(Target, Enemy)
 			if Enemy.Parent == SeaBeasts then
 				return true
+             elseif Target.Parent ~= SeaBeasts and Enemy:GetAttribute("RaidBoss") then
+              return true
+            elseif Target.Parent ~= SeaBeasts and not Enemy:GetAttribute("IsBoat") then
+               return true
 			elseif Target.Parent ~= SeaBeasts and Enemy:GetAttribute("IsBoat") then
 				return true
 			end
@@ -1581,7 +1737,8 @@ Module.Enemies = (function()
 							GunValidator:FireServer(self:GetValidator2())
 							
 							if ShootType == "TAP" then
-								Equipped.RemoteEvent:FireServer("TAP", TargetPosition)
+							  local humanoid = Equipped.Parent:FindFirstChildOfClass("Humanoid")
+                              for _, v in ipairs(humanoid:GetChildren()) do if v:IsA("RemoteFunction") and v.Name == "" then v:InvokeServer("TAP", Position) end end
 							else
 								RE_ShootGunEvent:FireServer(TargetPosition)
 							end
@@ -1631,7 +1788,7 @@ Module.Enemies = (function()
 				local Enemy = _Enemies[i]
 				local RootPart = IsAlive(Enemy) and Enemy.PrimaryPart
 				
-				if RootPart and (RootPart.Position - MyPosition).Magnitude <= 50 then
+				if RootPart and (RootPart.Position - MyPosition).Magnitude <= 55 then
 					Equipped.LeftClickRemote:FireServer((RootPart.Position - MyPosition).Unit, Combo)
 				end
 			end
@@ -1660,33 +1817,29 @@ Module.Enemies = (function()
 			end
 		end
 		
-		function FastAttack:GetValidator2()
-			local v1 = getupvalue(SHOOT_FUNCTION, 15) -- v40, 15
-			local v2 = getupvalue(SHOOT_FUNCTION, 13) -- v41, 13
-			local v3 = getupvalue(SHOOT_FUNCTION, 16) -- v42, 16
-			local v4 = getupvalue(SHOOT_FUNCTION, 17) -- v43, 17
-			local v5 = getupvalue(SHOOT_FUNCTION, 14) -- v44, 14
-			local v6 = getupvalue(SHOOT_FUNCTION, 12) -- v45, 12
-			local v7 = getupvalue(SHOOT_FUNCTION, 18) -- v46, 18
-			
-			local v8 = v6 * v2									-- v133
-			local v9 = (v5 * v2 + v6 * v1) % v3 -- v134
-			
-			v9 = (v9 * v3 + v8) % v4
-			v5 = math.floor(v9 / v3)
-			v6 = v9 - v5 * v3
-			v7 = v7 + 1
-			
-			setupvalue(SHOOT_FUNCTION, 15, v1) -- v40, 15
-			setupvalue(SHOOT_FUNCTION, 13, v2) -- v41, 13
-			setupvalue(SHOOT_FUNCTION, 16, v3) -- v42, 16
-			setupvalue(SHOOT_FUNCTION, 17, v4) -- v43, 17
-			setupvalue(SHOOT_FUNCTION, 14, v5) -- v44, 14
-			setupvalue(SHOOT_FUNCTION, 12, v6) -- v45, 12
-			setupvalue(SHOOT_FUNCTION, 18, v7) -- v46, 18
-			
-			return math.floor(v9 / v4 * 16777215), v7
-		end  
+     function FastAttack:GetValidator2()
+    local v53 = getupvalue(SHOOT_FUNCTION, 13) -- a
+    local v54 = getupvalue(SHOOT_FUNCTION, 14) -- 798405
+    local v55 = getupvalue(SHOOT_FUNCTION, 15) -- b
+    local v56 = getupvalue(SHOOT_FUNCTION, 16) -- 727595
+    local v57 = getupvalue(SHOOT_FUNCTION, 17) -- 1048576 + shared("")
+    local v58 = getupvalue(SHOOT_FUNCTION, 18) -- 1099511627776
+    local v59 = getupvalue(SHOOT_FUNCTION, 19) -- counter
+
+    local v93 = v53 * v54
+    local v96 = (v55 * v54 + v53 * v56) % v57
+
+    v96 = (v96 * v57 + v93) % v58
+    v55 = math.floor(v96 / v57)
+    v53 = v96 - v55 * v57
+    v59 = v59 + 1
+
+    setupvalue(SHOOT_FUNCTION, 13, v53)
+    setupvalue(SHOOT_FUNCTION, 15, v55)
+    setupvalue(SHOOT_FUNCTION, 19, v59)
+
+    return math.floor(v96 / v58 * 16777215), v59
+end
 
     local function IsValidTarget(Target)
 	if not (Target and Target.Parent) then return false end
@@ -1699,27 +1852,54 @@ Module.Enemies = (function()
 	return false
 end
 
-local function AddShot(Equipped)
+function FastAttack:ShootWithValidation(Position, Targets)
+	local Equipped = Player.Character and Player.Character:FindFirstChildOfClass("Tool")
+	if not Equipped then return end
+	if Equipped.ToolTip ~= "Gun" then return end
 	Equipped:SetAttribute("LocalTotalShots",(Equipped:GetAttribute("LocalTotalShots") or 0) + 1)
+	GunValidator:FireServer(self:GetValidator2())
+	if Targets then
+		RE_ShootGunEvent:FireServer(Position, Targets)
+	else
+		RE_ShootGunEvent:FireServer(Position)
+	end
 end
 
 function FastAttack:HandleOverheat(Equipped, Data)
 	if Data.Shooting then return end
-    self:UpdateBladeHits(Data.Distance, false, true)
+   if workspace:FindFirstChild("SeaBeasts") then
+		for _, v in pairs(workspace.SeaBeasts:GetChildren()) do
+			if v:IsA("Model") and string.find(v.Name,"SeaBeast") then
+				seaBeast = v
+				break
+			end
+		end
+      for _, v in pairs(workspace.SeaBeasts:GetChildren()) do
+			if v:IsA("Model") and not string.find(v.Name,"SeaBeast") then
+				levi = v
+				break
+			end
+		end
+	end
+	if seaBeast then
+		self:UpdateBladeHits(500, false, true)
+    elseif levi then
+     self:UpdateBladeHits(2000, false, true)
+	else
+		self:UpdateBladeHits(Data.Distance, false, true)
+	end
 	if #CurrentBladeHits == 0 then return end
 	local Position, PrimaryPart = ConvertToGunHits()
 	local Target = PrimaryPart
 	if not IsValidTarget(Target) then return end
 	Data.Shooting = true
 	while Equipped and Equipped.Parent == Player.Character and Data.TotalOverheat < Data.MaxOverheat do
-		if not IsValidTarget(Target) then break end
-		AddShot(Equipped)
-		GunValidator:FireServer(self:GetValidator2())
-		RE_ShootGunEvent:FireServer(Target.Position, { Target })	
+		if not IsValidTarget(Target) then task.wait() break end
+		self:ShootWithValidation(Target.Position, { Target })
 		Data.TotalOverheat += task.wait(Data.Cooldown)
 	end
 	while Data.TotalOverheat > 0 do
-		Data.TotalOverheat = math.clamp(Data.TotalOverheat - task.wait(),0,Data.MaxOverheat)
+		Data.TotalOverheat = math.clamp(Data.TotalOverheat - task.wait(), 0, Data.MaxOverheat)
 	end
 	Data.Shooting = false
 end
@@ -1729,11 +1909,9 @@ function FastAttack:HandleNormal(Equipped)
 	if #CurrentBladeHits == 0 then return end
 	local Position, PrimaryPart = ConvertToGunHits()
 	if not (PrimaryPart and PrimaryPart.Parent) then return end
-	AddShot(Equipped)
-	GunValidator:FireServer(self:GetValidator2())	
 	local shoots = self.ShootsPerTarget[Equipped.Name] or 1
 	for _ = 1, shoots do
-		RE_ShootGunEvent:FireServer(Position, CurrentBladeHits)
+		self:ShootWithValidation(Position, CurrentBladeHits)
 	end
 end
 
@@ -1743,13 +1921,7 @@ function FastAttack:HandlePositionOrTap(Equipped)
 	if self.ShootsFunctions[Equipped.Name] then
 		return self.ShootsFunctions[Equipped.Name](self, Equipped, Target.Position)
 	end
-	AddShot(Equipped)
-	GunValidator:FireServer(self:GetValidator2())
-	if ShootType == "TAP" then
-		Equipped.RemoteEvent:FireServer("TAP", Target.Position)
-	else
-		RE_ShootGunEvent:FireServer(Target.Position)
-	end
+	self:ShootWithValidation(Target.Position)
 end
 
 function FastAttack:UseGunShoot(Character, Equipped)
@@ -1792,7 +1964,7 @@ end
 				
 				if ToolTip == "Blox Fruit" and not self.NormalClickFruits[Equipped.Name] and not self.FruitClick[Equipped.Name] then
 					if Equipped:FindFirstChild("LeftClickRemote") then
-						Equipped.LeftClickRemote:FireServer(Vector3.new(0.01,-500,0.01),1,true)
+						Equipped.LeftClickRemote:FireServer(Vector3.new(0.01,-500,0.01),1)
 					end
                 elseif ToolTip == "Blox Fruit" and self.FruitClick[Equipped.Name] then
 					if Equipped:FindFirstChild("LeftClickRemote") then
@@ -1832,7 +2004,121 @@ end
 		
 		return RaidList
 	end)()
-
+	
+	--[[Module.Tween = (function()
+		local BodyVelocity = Instance.new("BodyVelocity")
+		BodyVelocity.Velocity = Vector3.zero
+		BodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+		BodyVelocity.P = 1000
+		
+		if _ENV.tween_bodyvelocity then
+			_ENV.tween_bodyvelocity:Destroy()
+		end
+		
+		_ENV.tween_bodyvelocity = BodyVelocity
+		
+		local IsAlive = Module.IsAlive
+		local CanRemoveTag = false
+		
+		local BaseParts, CanCollideObjects, CanTouchObjects = {}, {}, {} do
+			local function AddObjectToBaseParts(Object)
+				if Object:IsA("BasePart") and (Object.CanCollide or Object.CanTouch) then
+					table.insert(BaseParts, Object)
+					
+					if Object.CanCollide then CanCollideObjects[Object] = true end
+					if Object.CanTouch then CanTouchObjects[Object] = true end
+				end
+			end
+			
+			local function RemoveObjectsFromBaseParts(BasePart)
+				local index = table.find(BaseParts, BasePart)
+				
+				if index then
+					table.remove(BaseParts, index)
+				end
+			end
+			
+			local function NewCharacter(Character)
+				table.clear(BaseParts)
+				
+				for _, Object in ipairs(Character:GetDescendants()) do AddObjectToBaseParts(Object) end
+				Character.DescendantAdded:Connect(AddObjectToBaseParts)
+				Character.DescendantRemoving:Connect(RemoveObjectsFromBaseParts)
+				
+				Character:WaitForChild("Humanoid", 9e9).Died:Wait()
+				table.clear(BaseParts)
+			end
+			
+			table.insert(Connections, Player.CharacterAdded:Connect(NewCharacter))
+			task.spawn(NewCharacter, Player.Character)
+		end
+		
+		local function NoClipOnStepped(Character)
+			if not IsAlive(Character) then return end
+			
+			if _ENV.OnFarm and not Player:HasTag("Teleporting") then
+				Player:AddTag("Teleporting")
+				CanRemoveTag = true
+			elseif not _ENV.OnFarm and CanRemoveTag and Player:HasTag("Teleporting") then
+				Player:RemoveTag("Teleporting")
+				CanRemoveTag = false
+			end
+			
+			if _ENV.OnFarm then
+				for i = 1, #BaseParts do
+					local BasePart = BaseParts[i]
+					local CanTouchValue = if (tick() - Module.RemoveCanTouch) <= 1 then false else true
+					
+					if CanTouchObjects[BasePart] and BasePart.CanTouch ~= CanTouchValue then
+						BasePart.CanTouch = CanTouchValue
+					end
+					if CanCollideObjects[BasePart] and BasePart.CanCollide then
+						BasePart.CanCollide = false
+					end
+				end
+			elseif Character.PrimaryPart and (not Character.PrimaryPart.CanCollide or not Character.PrimaryPart.CanTouch) then
+				for i = 1, #BaseParts do
+					local BasePart = BaseParts[i]
+					
+					if CanCollideObjects[BasePart] then
+						BasePart.CanCollide = true
+					end
+					if CanTouchObjects[BasePart] then
+						BasePart.CanTouch = true
+					end
+				end
+			end
+		end
+		
+		local function UpdateVelocityOnStepped(Character)
+			local RootPart = Character and Character:FindFirstChild("UpperTorso")
+			local Humanoid = Character and Character:FindFirstChild("Humanoid")
+			local BodyVelocity = _ENV.tween_bodyvelocity
+			
+			if _ENV.OnFarm and RootPart and Humanoid and Humanoid.Health > 0 then
+				if BodyVelocity.Parent ~= RootPart then
+					BodyVelocity.Parent = RootPart
+				end
+			else
+				if BodyVelocity.Parent then
+					BodyVelocity.Parent = nil
+				end
+			end
+			
+			if BodyVelocity.Velocity ~= Vector3.zero and (not Humanoid or not Humanoid.SeatPart or not _ENV.OnFarm) then
+				BodyVelocity.Velocity = Vector3.zero
+			end
+		end
+		
+		table.insert(Connections, Stepped:Connect(function()
+			local Character = Player.Character
+			UpdateVelocityOnStepped(Character)
+			NoClipOnStepped(Character)
+		end))
+		
+		return BodyVelocity
+	end)()
+]]
   Module.Hooking = (function()
 		local Hooking = {
 			Skills = CreateDictionary({ "Z", "X", "C", "V", "F" }, true),
@@ -1883,9 +2169,10 @@ end
 				local Players = Players:GetPlayers()
 				local Enemies = Enemies:GetChildren()
 				
-				local Distance = if Equipped.ToolTip == "Gun" then 120 else 900
+				local Distance = 900
 				local ClosestsDistance = if Equipped.ToolTip == "Gun" then 120 else 60
-				
+
+               if not _G.NoAimPlayer then
 				for i = 1, #Players do
 					local __Player = Players[i]
 					local Character = __Player.Character
@@ -1903,11 +2190,9 @@ end
 						end
 					end
 				end
+            end
 				
-				if Settings.NoAimMobs then
-					return nil
-				end
-				
+				if not _G.NoAimMobs then
 				for i = 1, #Enemies do
 					local Enemy = Enemies[i]
 					local UpperTorso = Enemy and Enemy:FindFirstChild("UpperTorso")
@@ -1925,6 +2210,7 @@ end
 				end
 			end
 		end
+    end
 		
 		task.defer(function()
 			if _ENV.original_namecall then
@@ -1948,7 +2234,7 @@ end
 							for i = 1, #ClosestList do
 								local BasePart = ClosestList[i]
 								
-								if BasePart and (not Enemies[1] or (BasePart.Position - Enemies[1].Position).Magnitude <= 900) then
+								if BasePart and (not Enemies[1] or (BasePart.Position - Enemies[1].Position).Magnitude <= 500) then
 									table.insert(Enemies, BasePart)
 								end
 							end
@@ -1987,7 +2273,7 @@ end
 	end)()
 
 --[[  task.defer(function()
-	 	local DeathEffect = require(WaitChilds(ReplicatedStorage, "Effect", "Container", "Death"))
+	 	local DeathEffect = require(WaitChilds(ReplicatedStorage, "EffectContainer", "Death"))
 	 	local CameraShaker = require(WaitChilds(ReplicatedStorage, "Util", "CameraShaker"))
 		if CameraShaker then
 	 		CameraShaker:Stop()
@@ -1995,8 +2281,8 @@ end
         if hookfunction then
  		hookfunction(DeathEffect, function(...) return ... end)
 	 	end
-	end) ]]
-	
+	end)
+]]	
 	task.spawn(function()
 		local SpawnLocations = Module.SpawnLocations
 		local EnemyLocations = Module.EnemyLocations
