@@ -1,7 +1,10 @@
+local _ENV = (getgenv or getrenv or getfenv)()
+local SECRET_QUESTS = SECRET_QUESTS or _ENV.SECRET_QUESTS
+
 local Scripts = {
 	{
 		GameId = 994732206,
-		UrlPath = "BloxFruits.luau"
+		UrlPath = if SECRET_QUESTS then "SecretQuests.lua" else "BloxFruits.luau"
 	},
 	{
 		PlacesIds = {10260193230},
@@ -11,20 +14,13 @@ local Scripts = {
 		PlacesIds = {104067066727140},
 		UrlPath = "VoxSeas.luau"
 	},
-    {
-      GameId = 10200395747,
-      UrlPath = "Grow-a-garden.luau"
-      }
+	{
+		GameId = 10200395747,
+		UrlPath = "Grow-a-garden.luau"
+	}
 }
 
 local fetcher, urls = {}, {}
-
-local _ENV = (getgenv or getrenv or getfenv)()
-
-urls.Owner = "https://raw.githubusercontent.com/newredzv3/";
-urls.Repository = urls.Owner .. "Scripts/refs/heads/main/";
-urls.Translator = urls.Repository .. "Translator/";
-urls.Utils = urls.Repository .. "Utils/";
 
 do
 	local last_exec = _ENV.rz_execute_debounce
@@ -35,6 +31,11 @@ do
 	
 	_ENV.rz_execute_debounce = tick()
 end
+
+urls.Owner = "https://raw.githubusercontent.com/newredzv3/";
+urls.Repository = urls.Owner .. "Scripts/refs/heads/main/";
+urls.Translator = urls.Repository .. "Translator/";
+urls.Utils = urls.Repository .. "Utils/";
 
 do
 	local executor = syn or fluxus
@@ -54,7 +55,13 @@ do
 			SettingsCode = "unpack(game:GetService('HttpService'):JSONDecode('" .. EncodedSettings .. "'))"
 		end
 		
-		pcall(queueteleport, ("loadstring(game:HttpGet('%smain.luau'))(%s)"):format(urls.Repository, SettingsCode))
+		local SourceCode = ("loadstring(game:HttpGet('%smain.luau'))(%s)"):format(urls.Repository, SettingsCode)
+		
+		if SECRET_QUESTS then
+			SourceCode = "getgenv().SECRET_QUESTS=true;" .. SourceCode
+		end
+		
+		pcall(queueteleport, SourceCode)
 	end
 end
 
@@ -116,10 +123,11 @@ local function IsPlace(Script)
 	elseif Script.GameId and Script.GameId == game.GameId then
 		return true
 	end
+	return false
 end
 
 for _, Script in Scripts do
 	if IsPlace(Script) then
 		return fetcher.load("{Repository}Games/" .. Script.UrlPath)(fetcher, ...)
 	end
-end 	
+end
