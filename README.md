@@ -16,7 +16,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/newredzv3/Scripts/ref
 - Blox Fruits
 ```lua
 
-local Settings = {
+getgenv.()Settings = {
   JoinTeam = "Pirates"; -- Pirates/Marines
   Translator = true; -- true/false
 }
