@@ -610,14 +610,31 @@ end
 	end
 	
 	Module.Signals = {} do
-		local Signals = Module.Signals
-		
-		Signals.PossibleStaff = Signal.new()
-		Signals.OptionChanged = Signal.new()
-		Signals.EnemyAdded = Signal.new()
-		Signals.EnemyDied = Signal.new()
-		Signals.Notify = Signal.new()
-	end
+        local Signals = Module.Signals
+    
+        Signals.PossibleStaff = Signal.new()
+        Signals.OptionChanged = Signal.new()
+        Signals.EnemyAdded = Signal.new()
+        Signals.EnemyDied = Signal.new()
+        Signals.Notify = Signal.new()
+        Signals.Error = Signal.new()
+
+        Signals.Error:Connect(function(ErrorMessage)
+            _ENV.loadedFarm = nil
+            _ENV.OnFarm = false
+
+            local text = (`redz-Hub error [ {Settings.RunningOption or "Null"} ] {ErrorMessage}`)
+
+            if _ENV.rz_error_message and _ENV.rz_error_message.Parent then
+                _ENV.rz_error_message.Text = _ENV.rz_error_message.Text .. `\n\n{ text }`
+                return nil
+            end
+
+            local Message = Instance.new("Message", workspace)
+            _ENV.rz_error_message = Message
+            Message.Text = text
+        end)
+    end
 	
 	Module.RunFunctions = {} do
 		Module.RunFunctions.Translator = function(Window, Translation)
@@ -738,12 +755,12 @@ end
 		end
 		
       Module.RunFunctions.FarmQueue = function(Options)
-    local function GetQueue()
-        for _, Option in Options do
-            Settings.RunningOption = Option.Name
-            local Method = Option.Function()
-            if Method then
-                if type(Method) == "string" then
+        local function GetQueue()
+            for _, Option in Options do
+                Settings.RunningOption = Option.Name:gsub("%s+", "")
+                local Method = Option.Function()
+                if Method then
+                    if type(Method) == "string" then
                     Settings.RunningMethod = Method
                 end
                 return Method
@@ -753,13 +770,16 @@ end
     end
     spawn(function()
         while task.wait(Settings.SmoothMode and 0.25 or 0) do
-            pcall(function()
+            local Success, ErrorMessage = pcall(function()
                 if _ENV.teleporting then
                     _ENV.OnFarm = true
                 else
                     _ENV.OnFarm = GetQueue() and true or false
                 end
             end)
+            if not Success then
+                Module.Signals.Error:Fire(ErrorMessage)
+            end
         end
     end)
 end
@@ -1366,7 +1386,7 @@ local PlayerRootPart = (Player.Character or Player.CharacterAdded()):WaitForChil
       while PlayerRootPart and RootPart and Humanoid and Humanoid.Health > 0 and Enemy and Enemy.Parent == Enemies and Enemy:HasTag(BRING_TAG) do
         local Target = Cached.Bring[if Module.IsSuperBring then "ALL_MOBS" else EnemyName]
         
-        if Target and (PlayerRootPart.Position - RootPart.Position).Magnitude <= Settings.BringDistance then
+        if Target and (PlayerRootPart.Position - RootPart.Position).Magnitude <= Settings.BringDistance and not Enemy:GetAttribute("RaidBoss") and not Enemy:GetAttribute("Boss") then
        if _ENV.rz_EnabledOptions.Ectoplasm then
            if (RootPart.Position - Target.Position).Magnitude <= 200 then
             RootPart.CFrame = Target
@@ -1376,7 +1396,7 @@ local PlayerRootPart = (Player.Character or Player.CharacterAdded()):WaitForChil
             BodyPosition.Position = Target.Position
           end
        elseif _ENV.rz_EnabledOptions.DungeonKill then
-       if (RootPart.Position - Target.Position).Magnitude <= 150 and not Enemy:GetAttribute("RaidBoss") then
+       if (RootPart.Position - Target.Position).Magnitude <= 100 then
             RootPart.CFrame = Target
             RootPart.CanCollide = false
           else
@@ -1384,7 +1404,7 @@ local PlayerRootPart = (Player.Character or Player.CharacterAdded()):WaitForChil
             BodyPosition.Position = Target.Position
           end
          else
-          if (RootPart.Position - Target.Position).Magnitude <= 250 then
+          if (RootPart.Position - Target.Position).Magnitude <= 225 then
             RootPart.CFrame = Target
             RootPart.CanCollide = false
           else
@@ -1419,6 +1439,7 @@ end
 		
 		return EnemiesModule
 	end)()
+
 
   local function safeGetItems()
     local ok, result = pcall(function()
