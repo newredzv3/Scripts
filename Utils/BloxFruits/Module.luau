@@ -610,31 +610,42 @@ end
 	end
 	
 	Module.Signals = {} do
-        local Signals = Module.Signals
+  	  local Signals = Module.Signals
     
-        Signals.PossibleStaff = Signal.new()
-        Signals.OptionChanged = Signal.new()
-        Signals.EnemyAdded = Signal.new()
-        Signals.EnemyDied = Signal.new()
-        Signals.Notify = Signal.new()
-        Signals.Error = Signal.new()
+	    Signals.PossibleStaff = Signal.new()
+	    Signals.OptionChanged = Signal.new()
+	    Signals.EnemyAdded = Signal.new()
+	    Signals.EnemyDied = Signal.new()
+	    Signals.Notify = Signal.new()
+  	  Signals.Error = Signal.new()
 
-        Signals.Error:Connect(function(ErrorMessage)
-            _ENV.loadedFarm = nil
-            _ENV.OnFarm = false
+	    Signals.Error:Connect(function(ErrorMessage)
+     	   _ENV.loadedFarm = nil
+ 	       _ENV.OnFarm = false
 
-            local text = (`redz-Hub error [ {Settings.RunningOption or "Null"} ] {ErrorMessage}`)
+     	   local text = (`redz-Hub error [ {Settings.RunningOption or "Null"} ] {ErrorMessage}`)
 
-            if _ENV.rz_error_message and _ENV.rz_error_message.Parent then
-                _ENV.rz_error_message.Text = _ENV.rz_error_message.Text .. `\n\n{ text }`
-                return nil
-            end
+  	      if _ENV.rz_error_message and _ENV.rz_error_message.Parent then
+  	          _ENV.rz_error_message.Text = text
+    	    else
+    	        local Message = Instance.new("Message", workspace)
+  	          _ENV.rz_error_message = Message
+     	       Message.Text = text
+	        end
 
-            local Message = Instance.new("Message", workspace)
-            _ENV.rz_error_message = Message
-            Message.Text = text
-        end)
-    end
+  	      if _ENV.rz_error_cleanup_task then
+ 	           task.cancel(_ENV.rz_error_cleanup_task)
+	        end
+
+   	     _ENV.rz_error_cleanup_task = task.delay(5, function()
+        	    if _ENV.rz_error_message then
+      	          _ENV.rz_error_message:Destroy()
+ 	               _ENV.rz_error_message = nil
+   	         end
+ 	           _ENV.rz_error_cleanup_task = nil
+ 	       end)
+	    end)
+	end
 	
 	Module.RunFunctions = {} do
 		Module.RunFunctions.Translator = function(Window, Translation)
