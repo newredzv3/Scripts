@@ -610,28 +610,40 @@ end
 	end
 	
 	Module.Signals = {} do
-    	local Signals = Module.Signals
+  	  local Signals = Module.Signals
     
 	    Signals.PossibleStaff = Signal.new()
-    	Signals.OptionChanged = Signal.new()
+	    Signals.OptionChanged = Signal.new()
 	    Signals.EnemyAdded = Signal.new()
 	    Signals.EnemyDied = Signal.new()
- 	   Signals.Notify = Signal.new()
-	    Signals.Error = Signal.new()
+	    Signals.Notify = Signal.new()
+  	  Signals.Error = Signal.new()
 
 	    Signals.Error:Connect(function(ErrorMessage)
- 	       _ENV.loadedFarm = nil
-    	    _ENV.OnFarm = false
+     	   _ENV.loadedFarm = nil
+ 	       _ENV.OnFarm = false
 
-   	     local text = (`redz-Hub error [ {Settings.RunningOption or "Null"} ] {ErrorMessage}`)
+     	   local text = (`redz-Hub error [ {Settings.RunningOption or "Null"} ] {ErrorMessage}`)
 
-   	     if _ENV.rz_error_message and _ENV.rz_error_message.Parent then
-       	     _ENV.rz_error_message.Text = text
-  	      else
+  	      if _ENV.rz_error_message and _ENV.rz_error_message.Parent then
+  	          _ENV.rz_error_message.Text = text
+    	    else
     	        local Message = Instance.new("Message", workspace)
- 	           _ENV.rz_error_message = Message
-  	          Message.Text = text
+  	          _ENV.rz_error_message = Message
+     	       Message.Text = text
 	        end
+
+  	      if _ENV.rz_error_cleanup_task then
+ 	           task.cancel(_ENV.rz_error_cleanup_task)
+	        end
+
+   	     _ENV.rz_error_cleanup_task = task.delay(10000000000, function()
+        	    if _ENV.rz_error_message then
+      	          _ENV.rz_error_message:Destroy()
+ 	               _ENV.rz_error_message = nil
+   	         end
+ 	           _ENV.rz_error_cleanup_task = nil
+ 	       end)
 	    end)
 	end
 	
